@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM 智投 · 简历×JD 智能分析</title>
+<style>
+  :root{
+    --bg:#f5f6fa;--card:#fff;--ink:#1c2333;--ink2:#4a5468;--ink3:#8a93a6;
+    --line:#e4e8f0;--brand:#3b5bdb;--brand-d:#2f49b0;--brand-soft:#eef1fd;
+    --green:#0e9f6e;--green-soft:#e6f7f0;--red:#d64545;--red-soft:#fdeaea;
+    --amber:#d97706;--amber-soft:#fdf3e3;--purple:#7c3aed;--purple-soft:#f3edfe;
+    --mono:Consolas,'Cascadia Code',monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.7;}
+  .topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--line);}
+  .topbar-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:11px 20px;}
+  .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4c6ef5,#364fc7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;}
+  .tbar-title{font-weight:700;font-size:15px;}
+  .tbar-sub{font-size:11.5px;color:var(--ink3);}
+  .tbar-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .privacy-badge{font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-soft);padding:4px 10px;border-radius:999px;border:1px solid #b9e6d3;white-space:nowrap;}
+  .model-chip{font-size:11.5px;color:var(--ink2);background:#f0f2f9;padding:4px 10px;border-radius:999px;}
+  .btn-ghost{font-size:12px;font-weight:700;color:var(--brand);background:var(--brand-soft);border:1px solid #d6defb;padding:5px 14px;border-radius:999px;cursor:pointer;}
+  .btn-ghost:hover{background:#e2e8fc;}
+  .container{max-width:1080px;margin:0 auto;padding:24px 20px 60px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  .card-h{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;}
+  .card-h .step{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--brand);background:var(--brand-soft);padding:3px 9px;border-radius:999px;}
+  .card-h b{font-size:14.5px;}
+  .card-b{padding:16px 20px;}
+  .drop{border:2px dashed #c7d0ec;border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:.15s;background:#fafbfe;}
+  .drop:hover,.drop.over{border-color:var(--brand);background:var(--brand-soft);}
+  .drop .icon{font-size:24px;}
+  .drop .t1{font-weight:700;margin-top:4px;}
+  .drop .t2{font-size:12px;color:var(--ink3);margin-top:2px;}
+  .file-info{display:flex;align-items:center;gap:10px;background:#f0f2f9;border-radius:10px;padding:10px 14px;margin-top:10px;flex-wrap:wrap;}
+  .file-info .fi-name{font-weight:600;font-size:13px;}
+  .file-info .fi-meta{font-size:11.5px;color:var(--ink3);}
+  .file-info .fi-ok{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-soft);padding:3px 10px;border-radius:999px;}
+  .sens-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .sens-chip{font-size:11px;background:var(--amber-soft);color:#7c5210;border:1px solid #f0ddb0;padding:2px 9px;border-radius:999px;}
+  details.sanitize-detail{margin-top:10px;font-size:12.5px;}
+  details.sanitize-detail summary{cursor:pointer;color:var(--brand);font-weight:600;}
+  details.sanitize-detail textarea{margin-top:8px;}
+  label.lbl{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin:14px 0 6px;}
+  textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-family:var(--sans);font-size:13px;resize:vertical;min-height:130px;background:#fafbfe;color:var(--ink);}
+  textarea:focus{outline:2px solid var(--brand);border-color:var(--brand);}
+  textarea[readonly]{background:#f2f4f9;}
+  .quick{font-size:11.5px;color:var(--brand);background:var(--brand-soft);border:1px solid #d6defb;padding:4px 10px;border-radius:999px;cursor:pointer;margin-left:8px;}
+  .btn-main{display:block;width:100%;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,#4c6ef5,#364fc7);cursor:pointer;margin-top:16px;transition:.15s;}
+  .btn-main:hover{filter:brightness(1.06);}
+  .btn-main:disabled{opacity:.5;cursor:not-allowed;}
+  .privacy-note{font-size:11.5px;color:var(--ink3);text-align:center;margin-top:10px;}
+  .progress-card{padding:36px;text-align:center;display:none;}
+  .spinner{width:36px;height:36px;border:4px solid #d6defb;border-top-color:var(--brand);border-radius:50%;margin:0 auto 14px;animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .progress-steps{display:flex;justify-content:center;gap:24px;margin-top:14px;font-size:12px;color:var(--ink3);flex-wrap:wrap;}
+  .progress-steps .on{color:var(--brand);font-weight:700;}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px 0;}
+  .tab{padding:8px 15px;border-radius:10px 10px 0 0;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;border:1px solid transparent;border-bottom:none;}
+  .tab.on{background:var(--card);color:var(--brand-d);border-color:var(--line);margin-bottom:-1px;border:1px solid var(--line);border-bottom:1px solid var(--card);}
+  .tab-body{display:none;padding:16px 20px 22px;border-top:1px solid var(--line);}
+  .tab-body.on{display:block;}
+  .score-hero{display:flex;align-items:center;gap:26px;padding:4px;flex-wrap:wrap;}
+  .score-num{font-size:50px;font-weight:800;color:var(--brand);line-height:1;}
+  .score-tag{font-size:13px;font-weight:700;background:var(--brand-soft);color:var(--brand-d);padding:4px 12px;border-radius:999px;display:inline-block;margin-top:6px;}
+  .score-tag.watch{background:var(--amber-soft);color:var(--amber);}
+  .score-tag.skip{background:var(--red-soft);color:var(--red);}
+  .bars{flex:1.3;min-width:260px;}
+  .bar-row{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:12px;}
+  .bar-row .bl{width:74px;color:var(--ink2);flex-shrink:0;}
+  .bar-row .bt{flex:1;height:10px;background:#eef0f6;border-radius:99px;overflow:hidden;}
+  .bar-row .bf{display:block;height:100%;border-radius:99px;background:var(--brand);}
+  .bar-row .bv{width:38px;text-align:right;font-weight:700;font-family:var(--mono);font-size:12px;}
+  .score-side{flex:1;min-width:220px;font-size:12.5px;color:var(--ink2);}
+  .score-side .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line);}
+  .score-side .row b{color:var(--ink);}
+  .veto-box{background:var(--green-soft);color:#0b6e4f;border-radius:10px;padding:10px 14px;font-size:12.5px;margin:10px 0;}
+  .veto-box.fail{background:var(--red-soft);color:#8c2f2f;}
+  .h-title{font-weight:700;margin:14px 0 8px;font-size:13.5px;}
+  .gap-list{display:flex;flex-wrap:wrap;gap:8px;}
+  .gap-chip{background:#f0f2f9;border-radius:999px;padding:4px 12px;font-size:12px;color:var(--ink2);}
+  .dim-card{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;}
+  .dim-card .dc-h{display:flex;align-items:center;gap:8px;}
+  .dim-card .dc-h b{font-size:13px;}
+  .dim-card .dc-h .dc-score{font-family:var(--mono);font-weight:800;color:var(--brand);}
+  .dim-card .dc-ev{font-size:12px;color:var(--green);margin-top:4px;}
+  .dim-card .dc-gap{font-size:12px;color:var(--amber);margin-top:2px;}
+  .kws{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;}
+  .kw{font-size:12px;padding:4px 11px;border-radius:999px;}
+  .kw.hit{background:var(--green-soft);color:#0b6e4f;border:1px solid #b9e6d3;}
+  .kw.miss{background:var(--red-soft);color:#8c2f2f;border:1px solid #f2cccc;}
+  .kw.hint{background:var(--amber-soft);color:#7c5210;border:1px solid #f0ddb0;}
+  .rewrite{border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:9px 0;}
+  .rewrite .lab{font-size:11px;font-weight:800;color:var(--ink3);letter-spacing:.05em;}
+  .rewrite .bef{font-size:13px;color:var(--ink3);margin-top:3px;}
+  .rewrite .aft{font-size:13px;color:#0b6e4f;margin-top:4px;font-weight:600;}
+  .g-ver{border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:9px 0;}
+  .g-ver .gv-h{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;}
+  .g-ver .gv-t{font-weight:700;font-size:13px;}
+  .g-ver .gv-d{font-size:11.5px;color:var(--ink3);}
+  .g-ver p{font-size:13.5px;margin:3px 0;}
+  .btn-copy{font-size:11.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);border:1px solid #d6defb;border-radius:999px;padding:4px 12px;cursor:pointer;margin-left:auto;}
+  .btn-copy.copied{background:var(--green-soft);color:#0b6e4f;border-color:#b9e6d3;}
+  .iq{border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:9px 0;}
+  .iq .typ{display:inline-block;font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;margin-bottom:5px;}
+  .typ-design{background:var(--brand-soft);color:var(--brand-d);}
+  .typ-math{background:var(--amber-soft);color:var(--amber);}
+  .typ-data{background:var(--purple-soft);color:var(--purple);}
+  .typ-behavior{background:var(--green-soft);color:#0b6e4f;}
+  .iq .q{font-weight:600;font-size:13.5px;}
+  .iq .a{font-size:12.5px;color:var(--ink2);margin-top:4px;}
+  .list-item{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:7px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .list-item .li-time{font-size:11.5px;color:var(--ink3);font-family:var(--mono);}
+  .list-item .li-ex{font-size:12.5px;color:var(--ink2);flex:1;min-width:200px;}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;}
+  .b-brand{background:var(--brand-soft);color:var(--brand-d);}
+  .b-amber{background:var(--amber-soft);color:var(--amber);}
+  .b-red{background:var(--red-soft);color:var(--red);}
+  .b-green{background:var(--green-soft);color:var(--green);}
+  .mini{font-size:12px;color:var(--ink3);}
+  .error-banner{display:none;background:var(--red-soft);border:1px solid #f2cccc;color:#8c2f2f;border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;}
+  .empty{text-align:center;color:var(--ink3);font-size:12.5px;padding:16px 0;}
+  /* modal */
+  .modal-mask{display:none;position:fixed;inset:0;background:rgba(20,26,42,.45);z-index:100;align-items:flex-start;justify-content:center;padding:60px 16px;}
+  .modal-mask.show{display:flex;}
+  .modal{background:var(--card);border-radius:16px;width:100%;max-width:460px;padding:22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.18);}
+  .modal h3{font-size:17px;margin-bottom:4px;}
+  .modal .sub{font-size:12px;color:var(--ink3);margin-bottom:14px;}
+  .modal label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:10px 0 4px;}
+  .modal input, .modal select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;background:#fafbfe;font-family:var(--sans);}
+  .modal input:focus, .modal select:focus{outline:2px solid var(--brand);}
+  .modal .row{display:flex;gap:8px;margin-top:14px;}
+  .modal .row button{flex:1;}
+  .modal .tips{font-size:11.5px;color:var(--ink3);margin-top:12px;background:#f6f7fb;border-radius:8px;padding:8px 12px;}
+  .mtest{margin-top:10px;text-align:center;font-size:12.5px;color:var(--green);min-height:20px;}
+  .btn-ok{border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,#4c6ef5,#364fc7);cursor:pointer;}
+  .btn-cancel{border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;color:var(--ink2);background:var(--card);cursor:pointer;}
+  .btn-danger{border:1px solid #f2cccc;border-radius:10px;padding:9px;font-size:13px;color:var(--red);background:var(--red-soft);cursor:pointer;}
+  .section-gap{margin-top:18px;}
+  .footer-note{text-align:center;font-size:12px;color:var(--ink3);margin-top:36px;}
+  .footer-note a{color:var(--brand);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="mark">PM</div>
+    <div>
+      <div class="tbar-title">PM 智投 <span style="font-size:11px;color:var(--ink3);font-weight:400">第一期 · 简历×JD 智能分析</span></div>
+      <div class="tbar-sub">数据仅保存在本机 · 发送前自动脱敏</div>
+    </div>
+    <div class="tbar-right">
+      <span class="model-chip" id="modelChip">模型：未配置</span>
+      <span class="privacy-badge">🔒 仅存本地</span>
+      <button class="btn-ghost" id="btnConfig">⚙ 模型设置</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 输入区 -->
+  <div class="card">
+    <div class="card-h"><span class="step">STEP 1</span><b>上传简历</b><span style="font-size:12px;color:var(--ink3)">支持 PDF / Word / 纯文本 · 仅本机解析</span></div>
+    <div class="card-b">
+      <div class="drop" id="drop">
+        <div class="icon">📄</div>
+        <div class="t1">点击或拖拽简历到这里</div>
+        <div class="t2">PDF · DOCX · TXT，最大 10MB</div>
+      </div>
+      <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt,.md" style="display:none">
+      <div class="file-info" id="fileInfo" style="display:none">
+        <div>📎</div>
+        <div>
+          <div class="fi-name" id="fiName"></div>
+          <div class="fi-meta" id="fiMeta"></div>
+        </div>
+        <div class="fi-ok">✓ 解析完成</div>
+      </div>
+      <div class="sens-chips" id="sensChips" style="display:none"></div>
+      <details class="sanitize-detail" id="sanitizeDetail" style="display:none">
+        <summary>🔍 查看即将发送给模型的内容（脱敏后）</summary>
+        <textarea readonly id="sanitizedPreview" rows="5"></textarea>
+      </details>
+      <label class="lbl">简历文本（可修改补充）<button class="quick" id="btnSampleResume">填入示例简历</button></label>
+      <textarea id="resumeBox" rows="8" placeholder="上传简历后自动填入；也可直接粘贴简历文本。姓名、手机号等敏感信息将在发送前自动脱敏。"></textarea>
+      <div class="error-banner" id="parseError"></div>
+
+      <label class="lbl">目标岗位 JD 描述（从 Boss直聘等平台复制粘贴）<button class="quick" id="btnSampleJD">填入示例 JD</button></label>
+      <textarea id="jdBox" rows="9" placeholder="粘贴目标岗位的完整 JD 描述（职责 + 要求 + 薪资）。"></textarea>
+
+      <button class="btn-main" id="btnRun">开始分析</button>
+      <div class="privacy-note">分析前将对简历脱敏（手机/邮箱/姓名等→占位符），仅「脱敏后的简历 + JD」发送至你配置的大模型服务商；全程无第三方服务器。</div>
+    </div>
+  </div>
+
+  <!-- 分析中 -->
+  <div class="card progress-card" id="progressCard" style="margin-top:16px">
+    <div class="spinner"></div>
+    <div style="font-weight:700;font-size:15px">正在分析…</div>
+    <div class="progress-steps">
+      <span id="ps1">1 解析简历</span><span id="ps2">2 脱敏处理</span><span id="ps3">3 分析匹配</span><span id="ps4">4 生成建议</span>
+    </div>
+  </div>
+
+  <!-- 错误 -->
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- 结果区 -->
+  <div class="card section-gap" id="resultCard" style="display:none">
+    <div class="tabs">
+      <div class="tab on" data-t="tab1">① 匹配度</div>
+      <div class="tab" data-t="tab2">② 优化建议</div>
+      <div class="tab" data-t="tab3">③ 打招呼话术</div>
+      <div class="tab" data-t="tab4">④ 面试准备</div>
+    </div>
+    <div class="tab-body on" id="tab1"></div>
+    <div class="tab-body" id="tab2"></div>
+    <div class="tab-body" id="tab3"></div>
+    <div class="tab-body" id="tab4"></div>
+  </div>
+
+  <!-- 历史 -->
+  <div class="card section-gap">
+    <div class="card-h"><b>📚 历史记录</b><span style="font-size:12px;color:var(--ink3)">仅保存在本机，可逐条删除或一键清空</span>
+      <button class="btn-danger" id="btnClearHistory" style="margin-left:auto">清空全部</button>
+    </div>
+    <div class="card-b" id="historyBox"><div class="empty">暂无历史记录</div></div>
+  </div>
+
+  <div class="footer-note">PM 智投 · 第一期 · 仿 <a href="https://github.com/MadsLorentzen/ai-job-search">ai-job-search</a> 理念设计 · 本地工具，请遵守各招聘平台用户协议</div>
+</div>
+
+<!-- 模型设置弹窗 -->
+<div class="modal-mask" id="configMask">
+  <div class="modal">
+    <h3>模型设置</h3>
+    <div class="sub">选择常用模型后自动填充地址与模型名，再填入 API Key。Key 仅保存在本机 data/config.json，不经过任何第三方服务器。</div>
+    <label>① 选择常用模型</label>
+    <select id="cfgPreset">
+      <option value="">— 请选择常用模型 —</option>
+      <option value="ds-flash">DeepSeek · V4 Flash（推荐 · 快且省）</option>
+      <option value="ds-pro">DeepSeek · V4 Pro（更强）</option>
+      <option value="ds-chat">DeepSeek · 兼容别名 deepseek-chat</option>
+      <option value="qwen-plus">通义千问 · qwen-plus</option>
+      <option value="qwen-max">通义千问 · qwen-max</option>
+      <option value="glm-flash">智谱 GLM · glm-4-flash（免费额度）</option>
+      <option value="glm-plus">智谱 GLM · glm-4-plus</option>
+      <option value="custom">自定义（手动填写 Base URL 与模型名）</option>
+    </select>
+    <label>② Base URL（自动填充，可微调）</label>
+    <input id="cfgBase" placeholder="https://api.deepseek.com/v1">
+    <label>③ 模型名（自动填充，可微调）</label>
+    <input id="cfgModel" placeholder="deepseek-v4-flash">
+    <label>④ API Key</label>
+    <input id="cfgKey" type="password" placeholder="sk-...">
+    <div class="row">
+      <button class="btn-cancel" id="btnTest">测试连接</button>
+      <button class="btn-ok" id="btnSave">保存</button>
+    </div>
+    <div class="mtest" id="testResult"></div>
+    <div class="tips">💡 选择后会自动填充 Base URL 与模型名；「自定义」可填任意 OpenAI 兼容接口。Key 留空则保留已保存的 Key。</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+let resumeText = '';
+let lastSensitive = [];
+
+/* ---------- 示例数据 ---------- */
+const SAMPLE_RESUME = `【姓名】 | 4年经验 | 上海
+求职意向：高级产品经理（B端 / AI方向）
+电话：13800138000　邮箱：wang.pm@example.com　微信：wpm2022
+
+工作经历
+公司：某企业服务 SaaS 公司（2022.07 - 至今）　职位：高级产品经理
+1. 主导智能客服机器人 2.0：负责多轮对话、转人工策略与 Prompt 分层模板设计，与算法团队共建评测集，上线后应答准确率提升 28%，人工转接率下降 15%。
+2. 负责企业后台 0 到 1 搭建：访谈 20+ B 端客户，梳理需求池，输出 PRD 30+ 份，支撑 120 家企业客户上线，续费率 92%。
+3. 搭建注册转化漏斗埋点，通过 A/B 实验优化注册流程，注册转化率提升 23%。
+
+公司：某互联网公司（2020.07 - 2022.06）　职位：产品经理
+1. 负责 C 端工具类 App 的版本迭代，管理需求池与排期，月度活跃用户 200 万。
+2. 设计用户分层与消息触达策略，Push 点击率提升 12%。
+
+教育背景
+某 211 大学 · 本科 · 信息管理与信息系统（2016-2020）
+
+技能
+需求分析、PRD 撰写、Axure、Figma、数据分析、A/B 实验、跨团队协作
+熟悉 SQL（基础取数）、了解大模型与 RAG 基本概念`;
+
+const SAMPLE_JD = `职位：高级 AI 产品经理（企业服务方向）
+岗位职责：
+1. 负责企业级 AI 产品的规划与落地，包括智能问答、知识库、AI 工作流等场景；
+2. 深入理解大模型能力边界，设计 prompt 策略与评测方案，持续提升产品效果；
+3. 与算法、研发、设计团队紧密协作，完成需求分析、PRD 撰写与版本迭代；
+4. 关注行业竞品与前沿技术，输出 AI 产品趋势分析与机会判断。
+任职要求：
+1. 本科及以上学历，3-5 年产品经验，1 年以上 AI 产品经验；
+2. 熟悉大模型、RAG、Prompt 工程，有落地案例者优先；
+3. 优秀的逻辑思维、数据分析与跨团队协作能力；
+4. 有 B 端 / 企业服务产品经验者优先。
+薪资：25-40K · 上海 · 15 薪`;
+
+/* ---------- 请求工具 ---------- */
+async function api(path, options = {}) {
+  let resp;
+  try {
+    resp = await fetch(path, options);
+  } catch (e) {
+    throw new Error('无法连接本地服务（服务可能未启动）。请运行 pm-scout 目录下的 start.bat 启动服务后刷新页面。');
+  }
+  let data = null;
+  try { data = await resp.json(); } catch (e) { /* noop */ }
+  if (!resp.ok) {
+    const msg = (data && data.detail) || `请求失败（${resp.status}）`;
+    throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+  }
+  return data;
+}
+
+/* ---------- 初始化 ---------- */
+async function init() {
+  bindTabs();
+  bindUpload();
+  $('btnConfig').onclick = openConfig;
+  $('btnSampleResume').onclick = () => { resumeText = SAMPLE_RESUME; $('resumeBox').value = SAMPLE_RESUME; hideFileInfo(); };
+  $('btnSampleJD').onclick = () => $('jdBox').value = SAMPLE_JD;
+  $('btnRun').onclick = runAnalyze;
+  $('btnClearHistory').onclick = clearHistory;
+  try {
+    const cfg = await api('/api/config');
+    $('modelChip').textContent = cfg.ready ? `模型：${cfg.model} · Key ${cfg.api_key_masked}` : '模型：未配置';
+    $('cfgBase').value = cfg.base_url;
+    $('cfgModel').value = cfg.model;
+  } catch (e) { /* ignore */ }
+  loadHistory();
+}
+init();
+
+/* ---------- 上传 ---------- */
+function bindUpload() {
+  const drop = $('drop');
+  drop.onclick = () => $('fileInput').click();
+  $('fileInput').onchange = e => { if (e.target.files[0]) handleFile(e.target.files[0]); e.target.value = ''; };
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => {
+    e.preventDefault(); drop.classList.remove('over');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  };
+}
+
+async function handleFile(file) {
+  $('parseError').style.display = 'none';
+  if (file.size > 10 * 1024 * 1024) { showError('parseError', '文件超过 10MB 上限'); return; }
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const data = await api('/api/parse_resume', { method: 'POST', body: fd });
+    resumeText = data.text;
+    $('resumeBox').value = data.text;
+    $('fiName').textContent = data.filename;
+    $('fiMeta').textContent = `解析成功 · 提取 ${data.chars} 字`;
+    $('fileInfo').style.display = 'flex';
+    if (data.sensitive && data.sensitive.length) {
+      lastSensitive = data.sensitive;
+      $('sensChips').innerHTML = data.sensitive.map(s =>
+        `<span class="sens-chip">🔒 已脱敏：${s.kind} × ${s.count}${s.examples.length ? '（' + s.examples.join('、') + '）' : ''}</span>`).join('');
+      $('sensChips').style.display = 'flex';
+      $('sanitizedPreview').value = data.sanitized_text;
+      $('sanitizeDetail').style.display = 'block';
+    } else {
+      $('sensChips').style.display = 'none';
+      $('sanitizeDetail').style.display = 'none';
+    }
+  } catch (e) {
+    showError('parseError', e.message);
+  }
+}
+
+function hideFileInfo() {
+  $('fileInfo').style.display = 'none';
+  $('sensChips').style.display = 'none';
+  $('sanitizeDetail').style.display = 'none';
+}
+
+function showError(id, msg) {
+  const el = $(id);
+  el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
+}
+
+/* ---------- 分析 ---------- */
+async function runAnalyze() {
+  const jd = $('jdBox').value.trim();
+  const resume = $('resumeBox').value.trim() || resumeText.trim();
+  hideError();
+  if (!resume || resume.length < 20) { showError('errorBanner', '请先上传或粘贴简历（至少 20 字）'); return; }
+  if (!jd || jd.length < 20) { showError('errorBanner', '请填写目标岗位 JD（至少 20 字）'); return; }
+
+  const btn = $('btnRun');
+  btn.disabled = true; btn.textContent = '分析中…';
+  $('resultCard').style.display = 'none';
+  $('progressCard').style.display = 'block';
+  const steps = ['ps1', 'ps2', 'ps3', 'ps4'];
+  steps.forEach((id, i) => setTimeout(() => $(id).classList.add('on'), 500 * (i + 1)));
+
+  try {
+    const data = await api('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resume_text: resume, jd_text: jd, sanitize: true, mask_name: true }),
+    });
+    renderResult(data.result);
+    $('progressCard').style.display = 'none';
+    $('resultCard').style.display = 'block';
+    $('resultCard').scrollIntoView({ behavior: 'smooth' });
+    loadHistory();
+  } catch (e) {
+    $('progressCard').style.display = 'none';
+    showError('errorBanner', e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '开始分析';
+  }
+}
+
+function hideError() {
+  $('errorBanner').style.display = 'none';
+}
+
+/* ---------- 渲染结果 ---------- */
+const TIER = { recommend: '推荐投递', watch: '可投备选', skip: '不建议' };
+const TIER_CLS = { recommend: '', watch: ' watch', skip: ' skip' };
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/\n/g, '<br>');
+}
+
+function renderResult(r) {
+  const m = r.match || {};
+  const score = m.score || 0;
+  const tier = TIER[m.tier] || TIER.watch;
+  const dims = m.dimensions || [];
+
+  // —— 匹配度 ——
+  let bars = dims.map(d => {
+    const pct = Math.max(0, Math.min(100, d.score || 0));
+    return `<div class="bar-row"><span class="bl">${esc(d.name)} ${Math.round((d.weight||0)*100)}%</span>
+      <span class="bt"><span class="bf" style="width:${pct}%"></span></span>
+      <span class="bv">${pct}</span></div>`;
+  }).join('');
+
+  let side = '';
+  const veto = m.veto || {};
+  side += `<div class="row"><span>否决项检查</span><b style="color:${veto.passed ? 'var(--green)' : 'var(--red)'}">${veto.passed ? '✓ 通过' : '✗ 命中'}</b></div>`;
+  side += `<div class="row"><span>评分</span><b>${score} / 100</b></div>`;
+
+  let vetoBox = `<div class="veto-box${veto.passed ? '' : ' fail'}">${veto.passed ? '✅ 硬性条件全部满足，可以放心投递。' : '❌ 存在一票否决项，建议谨慎评估。'}${veto.notes ? ' ' + esc(veto.notes) : ''}</div>`;
+
+  let gaps = (m.gaps || []).map(g => `<span class="gap-chip">${esc(g)}</span>`).join('');
+  let dimCards = dims.map(d => `
+    <div class="dim-card">
+      <div class="dc-h"><b>${esc(d.name)}</b><span class="dc-score">${d.score || 0}</span>
+        <span class="mini" style="margin-left:auto">权重 ${Math.round((d.weight||0)*100)}%</span></div>
+      ${d.evidence ? `<div class="dc-ev">✓ 匹配证据：${esc(d.evidence)}</div>` : ''}
+      ${d.gap ? `<div class="dc-gap">△ 差距：${esc(d.gap)}</div>` : ''}
+    </div>`).join('');
+
+  $('tab1').innerHTML = `
+    <div class="score-hero">
+      <div><div class="score-num">${score}</div><div class="score-tag${TIER_CLS[m.tier] || ''}">${tier}</div></div>
+      <div class="bars">${bars}</div>
+      <div class="score-side">${side}</div>
+    </div>
+    ${vetoBox}
+    <div class="h-title">差距清单（补齐后命中率更高）</div>
+    <div class="gap-list">${gaps || '<span class="mini">暂无</span>'}</div>
+    <div class="h-title">逐维点评</div>
+    ${dimCards}`;
+
+  // —— 优化建议 ——
+  const rt = r.resume_tips || {};
+  const kw = rt.keywords || {};
+  const kwHtml = [
+    ...(kw.hit || []).map(k => `<span class="kw hit">${esc(k)} ✓</span>`),
+    ...(kw.miss || []).map(k => `<span class="kw miss">${esc(k)} ✗</span>`),
+    ...(kw.suggest || []).map(k => `<span class="kw hint">💡 ${esc(k)}</span>`),
+  ].join('');
+  const rw = (rt.rewrites || []).map(x => `
+    <div class="rewrite"><div class="lab">STAR 改写</div>
+      <div class="bef">${esc(x.before)}</div>
+      <div class="aft">→ ${esc(x.after)}</div></div>`).join('');
+  const hi = (rt.highlights || []).map(x => `<li>${esc(x)}</li>`).join('');
+  const cut = (rt.cuts || []).map(x => `<li>${esc(x)}</li>`).join('');
+  $('tab2').innerHTML = `
+    <div class="h-title">关键词覆盖率（JD 高频词 vs 简历）</div>
+    <div class="kws">${kwHtml || '<span class="mini">暂无数据</span>'}</div>
+    <div class="h-title">STAR 量化改写示例</div>
+    ${rw || '<span class="mini">暂无</span>'}
+    <div class="h-title">建议置顶 / 扩充</div>
+    <ul style="font-size:13px">${hi || '<li class="mini">暂无</li>'}</ul>
+    <div class="h-title">建议删除 / 弱化</div>
+    <ul style="font-size:13px">${cut || '<li class="mini">暂无</li>'}</ul>`;
+
+  // —— 话术 ——
+  const g = r.greetings || {};
+  const gv = (name, label, desc, txt) => `
+    <div class="g-ver">
+      <div class="gv-h"><span class="gv-t">${label}</span><span class="gv-d">${desc}</span>
+        <button class="btn-copy" data-txt="${escAttr(txt)}">复制</button></div>
+      <p>${esc(txt)}</p>
+    </div>`;
+  $('tab3').innerHTML = `
+    ${gv('c', '简洁版', 'Boss直聘打招呼首选', g.concise)}
+    ${gv('p', '专业版', '匹配度高时使用', g.professional)}
+    ${gv('e', '热情版', '体现对公司的了解', g.enthusiastic)}
+    <p class="mini">提示：话术基于你的真实简历生成，未虚构经历；Boss直聘打招呼建议在工作时段（9:00-11:30 / 14:00-17:00）发送。请复制后手动粘贴发送。</p>`;
+  bindCopy();
+
+  // —— 面试准备 ——
+  const iv = r.interview || {};
+  const TYP = { '产品设计题': 'typ-design', '估算题': 'typ-math', '数据指标题': 'typ-data', '行为面': 'typ-behavior' };
+  const qs = (iv.questions || []).map(q => `
+    <div class="iq"><span class="typ ${TYP[q.type] || 'typ-design'}">${esc(q.type || '面试题')}</span>
+      <div class="q">${esc(q.question)}</div>
+      <div class="a">${esc(q.approach)}</div></div>`).join('');
+  const probes = (iv.probe_points || []).map(x => `<li>${esc(x)}</li>`).join('');
+  const mats = (iv.materials || []).map(x => `<li>${esc(x)}</li>`).join('');
+  $('tab4').innerHTML = `
+    <div class="h-title">预测题型（结合该 JD 与你的简历）</div>
+    ${qs || '<span class="mini">暂无</span>'}
+    <div class="h-title">面试官最可能深挖的简历点</div>
+    <ul style="font-size:13px">${probes || '<li class="mini">暂无</li>'}</ul>
+    <div class="h-title">面试前素材清单</div>
+    <ul style="font-size:13px">${mats || '<li class="mini">暂无</li>'}</ul>
+    <p class="mini" style="margin-top:8px">注：AI 生成的关于公司/行业的信息请人工核实后再用于面试。</p>`;
+}
+
+function escAttr(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function bindCopy() {
+  document.querySelectorAll('.btn-copy').forEach(b => {
+    b.onclick = () => {
+      const txt = b.dataset.txt;
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).catch(() => {});
+      b.textContent = '已复制 ✓'; b.classList.add('copied');
+      setTimeout(() => { b.textContent = '复制'; b.classList.remove('copied'); }, 1600);
+    };
+  });
+}
+
+/* ---------- tabs ---------- */
+function bindTabs() {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+      document.querySelectorAll('.tab-body').forEach(x => x.classList.remove('on'));
+      t.classList.add('on');
+      $(t.dataset.t).classList.add('on');
+    };
+  });
+}
+
+/* ---------- 模型设置 ---------- */
+const MODEL_PRESETS = {
+  'ds-flash':  { base: 'https://api.deepseek.com/v1', model: 'deepseek-v4-flash' },
+  'ds-pro':    { base: 'https://api.deepseek.com/v1', model: 'deepseek-v4-pro' },
+  'ds-chat':   { base: 'https://api.deepseek.com/v1', model: 'deepseek-chat' },
+  'qwen-plus': { base: 'https://dashscope.aliyuncs.com/compatible-mode/v1', model: 'qwen-plus' },
+  'qwen-max':  { base: 'https://dashscope.aliyuncs.com/compatible-mode/v1', model: 'qwen-max' },
+  'glm-flash': { base: 'https://open.bigmodel.cn/api/paas/v4', model: 'glm-4-flash' },
+  'glm-plus':  { base: 'https://open.bigmodel.cn/api/paas/v4', model: 'glm-4-plus' },
+};
+
+function presetKeyFor(base, model) {
+  for (const [k, v] of Object.entries(MODEL_PRESETS)) {
+    if (v.base === base && v.model === model) return k;
+  }
+  return 'custom';
+}
+
+$('cfgPreset').onchange = () => {
+  const preset = MODEL_PRESETS[$('cfgPreset').value];
+  if (preset) {
+    $('cfgBase').value = preset.base;
+    $('cfgModel').value = preset.model;
+  }
+  // 'custom' 或不选择时不改动已有输入，方便手动编辑
+};
+
+async function openConfig() {
+  $('configMask').classList.add('show');
+  $('testResult').textContent = '';
+  try {
+    const cfg = await api('/api/config');
+    $('cfgBase').value = cfg.base_url;
+    $('cfgModel').value = cfg.model;
+    $('cfgPreset').value = presetKeyFor(cfg.base_url, cfg.model);
+    $('cfgKey').value = '';
+    $('cfgKey').placeholder = cfg.api_key_masked ? `已保存（${cfg.api_key_masked}），留空则不修改` : 'sk-...';
+  } catch (e) { /* ignore */ }
+}
+$('configMask').addEventListener('click', e => { if (e.target === $('configMask')) $('configMask').classList.remove('show'); });
+$('btnSave').onclick = async () => {
+  const body = { base_url: $('cfgBase').value.trim(), model: $('cfgModel').value.trim() };
+  const key = $('cfgKey').value.trim();
+  if (!key) {
+    const cfg = await api('/api/config').catch(() => null);
+    if (!cfg || !cfg.ready) { $('testResult').textContent = '⚠ 请输入 API Key'; return; }
+  } else { body.api_key = key; }
+  try {
+    const r = await api('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    $('testResult').textContent = '✅ 已保存';
+    $('modelChip').textContent = `模型：${r.model} · Key ${r.api_key_masked}`;
+    setTimeout(() => $('configMask').classList.remove('show'), 700);
+  } catch (e) { $('testResult').textContent = '⚠ ' + e.message; }
+};
+$('btnTest').onclick = async () => {
+  $('testResult').textContent = '测试中…';
+  try {
+    const r = await api('/api/test_llm', { method: 'POST' });
+    $('testResult').textContent = '✅ ' + r.message;
+  } catch (e) { $('testResult').textContent = '❌ ' + e.message; }
+};
+
+/* ---------- 历史 ---------- */
+async function loadHistory() {
+  try {
+    const { items } = await api('/api/history');
+    const box = $('historyBox');
+    if (!items.length) { box.innerHTML = '<div class="empty">暂无历史记录</div>'; return; }
+    box.innerHTML = items.map(it => `
+      <div class="list-item">
+        <span class="li-time">${esc(it.time)}</span>
+        <span class="badge ${it.score >= 85 ? 'b-brand' : it.score >= 60 ? 'b-amber' : 'b-red'}">${it.score}</span>
+        <span class="badge b-green">${it.sanitized ? '已脱敏' : '未脱敏'}</span>
+        <span class="li-ex">${esc(it.jd_excerpt)}</span>
+        <button class="btn-ghost" data-view="${it.id}">查看</button>
+        <button class="btn-cancel" style="padding:4px 10px;font-size:12px" data-del="${it.id}">删除</button>
+      </div>`).join('');
+    box.querySelectorAll('[data-view]').forEach(b => b.onclick = () => viewHistory(b.dataset.view));
+    box.querySelectorAll('[data-del]').forEach(b => b.onclick = () => deleteHistory(b.dataset.del));
+  } catch (e) { /* ignore */ }
+}
+
+async function viewHistory(id) {
+  try {
+    const { item } = await api('/api/history/' + id);
+    $('resumeBox').value = item.resume_text || '';
+    $('jdBox').value = item.jd_text || '';
+    resumeText = item.resume_text || '';
+    renderResult(item.result || {});
+    $('resultCard').style.display = 'block';
+    $('resultCard').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) { showError('errorBanner', e.message); }
+}
+
+async function deleteHistory(id) {
+  await api('/api/history/' + id, { method: 'DELETE' });
+  loadHistory();
+}
+
+async function clearHistory() {
+  if (!confirm('确定清空全部历史记录吗？此操作不可恢复。')) return;
+  await api('/api/history', { method: 'DELETE' });
+  loadHistory();
+}
+</script>
+</body>
+</html>

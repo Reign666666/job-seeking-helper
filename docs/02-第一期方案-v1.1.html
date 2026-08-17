@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM 智投 · 第一期设计方案（Web 版）v1.1</title>
+<style>
+  :root{
+    --bg:#f5f6fa; --card:#ffffff; --ink:#1c2333; --ink2:#4a5468; --ink3:#8a93a6;
+    --line:#e4e8f0; --brand:#3b5bdb; --brand-d:#2f49b0; --brand-soft:#eef1fd;
+    --amber:#d97706; --amber-soft:#fdf3e3; --green:#0e9f6e; --green-soft:#e6f7f0;
+    --red:#d64545; --red-soft:#fdeaea; --purple:#7c3aed; --purple-soft:#f3edfe;
+    --mono:'Cascadia Code','JetBrains Mono',Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;}
+  ::selection{background:var(--brand);color:#fff;}
+  .layout{display:flex;max-width:1400px;margin:0 auto;}
+  .sidebar{position:sticky;top:0;height:100vh;width:260px;flex-shrink:0;padding:28px 12px 28px 20px;overflow-y:auto;border-right:1px solid var(--line);background:var(--card);}
+  .main{flex:1;min-width:0;padding:0 56px 80px;max-width:960px;}
+  .logo{display:flex;align-items:center;gap:10px;padding:6px 10px 20px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+  .logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4c6ef5,#364fc7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0;}
+  .logo h1{font-size:16px;line-height:1.3;}
+  .logo p{font-size:11px;color:var(--ink3);}
+  .logo .ver{font-size:10.5px;background:var(--amber-soft);color:var(--amber);padding:1px 7px;border-radius:999px;font-weight:700;}
+  .nav a{display:flex;gap:8px;align-items:baseline;padding:7px 10px;border-radius:8px;color:var(--ink2);text-decoration:none;font-size:13.5px;margin:1px 0;}
+  .nav a .no{font-family:var(--mono);font-size:11px;color:var(--ink3);flex-shrink:0;}
+  .nav a:hover{background:var(--brand-soft);color:var(--brand);}
+  .nav .grp{font-size:11px;color:var(--ink3);padding:14px 10px 4px;letter-spacing:.08em;}
+  .hero{padding:56px 0 24px;}
+  .tagline{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px;letter-spacing:.04em;}
+  .tagline.amber{color:var(--amber);background:var(--amber-soft);}
+  .hero h2{font-size:32px;line-height:1.28;font-weight:800;letter-spacing:-.01em;}
+  .hero .sub{margin-top:14px;color:var(--ink2);font-size:16px;max-width:720px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+  .chip{font-size:12px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink2);}
+  .chip b{color:var(--ink);font-weight:600;}
+  section{padding:42px 0 8px;border-top:1px solid var(--line);margin-top:36px;}
+  .sec-tag{font-family:var(--mono);font-size:12px;color:var(--brand);font-weight:700;letter-spacing:.1em;}
+  h3{font-size:22px;font-weight:750;margin:8px 0 6px;letter-spacing:-.01em;}
+  .lead{color:var(--ink2);font-size:15px;margin-bottom:18px;max-width:760px;}
+  h4{font-size:16px;font-weight:700;margin:24px 0 10px;display:flex;align-items:center;gap:8px;}
+  h4::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--brand);display:inline-block;}
+  p{margin:10px 0;}
+  ul,ol{margin:10px 0 10px 22px;}
+  li{margin:5px 0;}
+  code{font-family:var(--mono);font-size:12.5px;background:#eef0f6;color:#35407a;padding:2px 6px;border-radius:5px;}
+  pre{background:#141a2a;color:#dfe6f5;border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.7;margin:14px 0;}
+  pre .c{color:#6b7a99;} pre .k{color:#7cc7ff;} pre .s{color:#a5e6a5;} pre .n{color:#ffb86c;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:14px 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  @media(max-width:1000px){.grid2,.grid3{grid-template-columns:1fr;}.sidebar{display:none;}.main{padding:0 24px 60px;}}
+  .mini{font-size:12.5px;color:var(--ink3);}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em;}
+  .b-brand{background:var(--brand-soft);color:var(--brand-d);}
+  .b-amber{background:var(--amber-soft);color:var(--amber);}
+  .b-green{background:var(--green-soft);color:var(--green);}
+  .b-red{background:var(--red-soft);color:var(--red);}
+  .b-purple{background:var(--purple-soft);color:var(--purple);}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;background:var(--card);border-radius:12px;overflow:hidden;}
+  th{background:#f0f2f9;text-align:left;padding:10px 14px;font-size:12.5px;color:var(--ink2);border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .mono{font-family:var(--mono);font-size:12px;}
+  .callout{border-radius:12px;padding:14px 18px;margin:14px 0;font-size:14px;}
+  .callout.warn{background:var(--amber-soft);border:1px solid #f0ddb0;color:#7c5210;}
+  .callout.info{background:var(--brand-soft);border:1px solid #d6defb;color:#33408f;}
+  .callout.danger{background:var(--red-soft);border:1px solid #f2cccc;color:#8c2f2f;}
+  .callout.green{background:var(--green-soft);border:1px solid #b9e6d3;color:#0b6e4f;}
+  .figure{margin:20px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;}
+  .figure .cap{font-size:12.5px;color:var(--ink3);text-align:center;margin-top:10px;}
+  .figure svg{display:block;width:100%;height:auto;}
+  .flow-node{fill:#fff;stroke:#c9d3ef;}
+  .footer{margin-top:60px;padding:26px 0 10px;border-top:1px solid var(--line);color:var(--ink3);font-size:12.5px;}
+  .step-flow{display:flex;gap:10px;align-items:stretch;margin:16px 0;flex-wrap:wrap;}
+  .step-box{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .step-box .n{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--brand);}
+  .step-box b{display:block;margin:4px 0 2px;font-size:14px;}
+  .step-box span{font-size:12px;color:var(--ink2);}
+  .step-arrow{align-self:center;color:var(--ink3);font-size:18px;}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">PM</div>
+      <div>
+        <h1>PM 智投</h1>
+        <p>第一期设计方案</p>
+        <p class="ver">v1.1 · Web 版</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="grp">方案</div>
+      <a href="#change"><span class="no">01</span>范围变更说明</a>
+      <a href="#scope"><span class="no">02</span>定位与范围</a>
+      <a href="#flow"><span class="no">03</span>用户操作流程</a>
+      <a href="#spec"><span class="no">04</span>功能规格</a>
+      <a href="#privacy"><span class="no">05</span>隐私与安全</a>
+      <a href="#tech"><span class="no">06</span>技术方案</a>
+      <a href="#api"><span class="no">07</span>接口与 Prompt</a>
+      <a href="#accept"><span class="no">08</span>验收标准</a>
+      <a href="#phase2"><span class="no">09</span>二期衔接</a>
+    </nav>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <div class="hero">
+      <span class="tagline amber">PHASE 1 · v1.1 · 本期落地版</span>
+      <h2>第一期方案：简历 × JD 智能分析<br>Web 网页工具</h2>
+      <p class="sub">范围收缩为「上传简历 → 填写 JD → 输出 匹配度 / 优化建议 / 打招呼话术 / 面试准备建议」四项能力；<b>数据仅保留在本地</b>；Boss直聘自动化、多平台接入移至二期。</p>
+      <div class="meta">
+        <span class="chip"><b>形式</b> Web 网页</span>
+        <span class="chip"><b>范围</b> 简历分析 · 不做平台对接</span>
+        <span class="chip"><b>隐私</b> 本地化 · 发送前脱敏</span>
+        <span class="chip"><b>上游蓝图</b> v1.0 设计文档</span>
+        <span class="chip"><b>日期</b> 2026-08-15</span>
+      </div>
+    </div>
+
+    <!-- 01 CHANGE -->
+    <section id="change">
+      <span class="sec-tag">01 · CHANGE LOG</span>
+      <h3>范围变更说明（v1.0 蓝图 → v1.1 第一期）</h3>
+      <table>
+        <thead><tr><th>维度</th><th>v1.0 长期蓝图</th><th>v1.1 第一期（本期）</th><th>变更原因</th></tr></thead>
+        <tbody>
+          <tr><td>工具形态</td><td>本地 CLI + Agent 工作流</td><td><b>Web 网页</b></td><td>用户明确要求，降低使用门槛</td></tr>
+          <tr><td>用户操作</td><td>10+ 斜杠命令</td><td><b>4 步简单流程</b>（上传→填JD→分析→看结果）</td><td>聚焦核心价值，快速交付</td></tr>
+          <tr><td>平台接入</td><td>Boss直聘等自动化适配器</td><td><b>不做自动化</b>；打招呼话术以「复制粘贴」形式输出，用户手动发送</td><td>一期先验证分析质量与体验；自动化风险后置</td></tr>
+          <tr><td>数据能力</td><td>五维评分 / 简历诊断 / 雷达 / 面试模拟</td><td><b>全部保留但合并输出</b>：匹配度(五维) + 优化建议 + 打招呼话术 + 面试准备</td><td>四项输出即用户点名的第一期功能</td></tr>
+          <tr><td>隐私</td><td>本地存储 + 凭证留浏览器</td><td><b>强化</b>：仅本地 + LLM 发送前脱敏 + 不留痕选项</td><td>用户明确要求「个人信息仅保留在本地」</td></tr>
+          <tr><td>保留不变</td><td colspan="2">PM 专属语义（行业×方向×级别）、五维评分+否决、诚实规则、verify-before-use</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">v1.0 设计文档（<code>PM求职智能体设计文档.html</code>）保留为<b>长期蓝图</b>，其中的六阶段闭环、平台适配层、投递追踪等将在二期及以后落地。本稿为<b>本期可执行方案</b>。</div>
+    </section>
+
+    <!-- 02 SCOPE -->
+    <section id="scope">
+      <span class="sec-tag">02 · SCOPE</span>
+      <h3>定位与范围</h3>
+      <div class="grid2">
+        <div class="card">
+          <h4 style="margin-top:0">本期做什么（IN）</h4>
+          <ul>
+            <li>简历上传与本地解析（PDF / Word / 纯文本）</li>
+            <li>JD 粘贴与结构化解析（行业 / 方向 / 级别 / 技能 / 红线）</li>
+            <li><b>岗位匹配度分析</b>：总分 + 五维分解 + 否决项 + 差距清单</li>
+            <li><b>简历优化建议</b>：关键词覆盖率、STAR 量化改写示例、减分项</li>
+            <li><b>打招呼话术</b>：3 版个性化话术（可复制）</li>
+            <li><b>面试准备建议</b>：针对该 JD 的题型 + 答题思路 + 素材清单</li>
+            <li>隐私保护：全本地处理 + 发送 LLM 前脱敏 + 不留痕选项</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">本期不做（OUT）</h4>
+          <ul>
+            <li>❌ 平台自动化（自动搜索 / 自动投递 / 自动打招呼）—— 二期</li>
+            <li>❌ 多平台数据抓取 —— 二期</li>
+            <li>❌ 投递追踪看板 / 账号体系 —— 二期</li>
+            <li>❌ 面试模拟对话训练 —— 二期（本期只给建议与题库）</li>
+            <li>❌ 云端部署 —— 与「仅保留在本地」冲突，默认不做</li>
+          </ul>
+          <p class="mini" style="margin-top:8px">一句话：本期 = <b>「简历 × JD 智能分析咨询师」</b>，浏览器打开即用，分析完数据不留服务器。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 FLOW -->
+    <section id="flow">
+      <span class="sec-tag">03 · USER FLOW</span>
+      <h3>用户操作流程（4 步）</h3>
+      <div class="step-flow">
+        <div class="step-box"><span class="n">STEP 1</span><b>上传简历</b><span>拖拽或点击上传 PDF / Word / TXT，本地解析并预览提取结果</span></div>
+        <div class="step-arrow">→</div>
+        <div class="step-box"><span class="n">STEP 2</span><b>填写目标 JD</b><span>粘贴目标岗位 JD 文本（从 Boss直聘复制即可）</span></div>
+        <div class="step-arrow">→</div>
+        <div class="step-box"><span class="n">STEP 3</span><b>开始分析</b><span>点击分析，进度提示「解析中 → 脱敏中 → 分析中」</span></div>
+        <div class="step-arrow">→</div>
+        <div class="step-box"><span class="n">STEP 4</span><b>查看四项结果</b><span>匹配度 / 优化建议 / 打招呼话术 / 面试准备，可复制、可导出</span></div>
+      </div>
+
+      <div class="figure">
+        <svg viewBox="0 0 900 190" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9aa8cf"/></marker>
+          </defs>
+          <g>
+            <rect x="30" y="40" width="150" height="66" rx="10" class="flow-node"/><text x="105" y="64" text-anchor="middle" style="font-size:12.5px;font-weight:700">简历上传</text><text x="105" y="82" text-anchor="middle" style="font-size:10px;fill:#8a93a6">PDF/Word/TXT</text><text x="105" y="97" text-anchor="middle" style="font-size:10px;fill:#5a6478">浏览器本地解析</text>
+            <rect x="240" y="40" width="150" height="66" rx="10" class="flow-node"/><text x="315" y="64" text-anchor="middle" style="font-size:12.5px;font-weight:700">JD 填写</text><text x="315" y="82" text-anchor="middle" style="font-size:10px;fill:#8a93a6">粘贴文本</text><text x="315" y="97" text-anchor="middle" style="font-size:10px;fill:#5a6478">JD 结构化解析</text>
+            <rect x="450" y="40" width="150" height="66" rx="10" class="flow-node" style="fill:#eef1fd"/><text x="525" y="64" text-anchor="middle" style="font-size:12.5px;font-weight:700">脱敏处理</text><text x="525" y="82" text-anchor="middle" style="font-size:10px;fill:#8a93a6">手机/邮箱/微信等</text><text x="525" y="97" text-anchor="middle" style="font-size:10px;fill:#5a6478">替换为占位符</text>
+            <rect x="660" y="40" width="150" height="66" rx="10" class="flow-node" style="fill:#eef1fd"/><text x="735" y="64" text-anchor="middle" style="font-size:12.5px;font-weight:700">LLM 分析</text><text x="735" y="82" text-anchor="middle" style="font-size:10px;fill:#8a93a6">调用用户配置的</text><text x="735" y="97" text-anchor="middle" style="font-size:10px;fill:#5a6478">DeepSeek/通义/GLM</text>
+            <path d="M180,73 H240" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+            <path d="M390,73 H450" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+            <path d="M600,73 H660" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+          </g>
+          <g>
+            <rect x="30" y="140" width="196" height="30" rx="8" fill="#e6f7f0" stroke="#0e9f6e"/><text x="128" y="159" text-anchor="middle" style="font-size:10.5px;fill:#0b6e4f">① 匹配度分析（五维雷达）</text>
+            <rect x="244" y="140" width="196" height="30" rx="8" fill="#eef1fd" stroke="#c9d3ef"/><text x="342" y="159" text-anchor="middle" style="font-size:10.5px;fill:#33408f">② 简历优化建议</text>
+            <rect x="458" y="140" width="196" height="30" rx="8" fill="#eef1fd" stroke="#c9d3ef"/><text x="556" y="159" text-anchor="middle" style="font-size:10.5px;fill:#33408f">③ 打招呼话术（3 版）</text>
+            <rect x="672" y="140" width="198" height="30" rx="8" fill="#eef1fd" stroke="#c9d3ef"/><text x="771" y="159" text-anchor="middle" style="font-size:10.5px;fill:#33408f">④ 面试准备建议</text>
+          </g>
+        </svg>
+        <div class="cap">图 1 · 第一期数据流：全程本机，仅「脱敏后的简历文本 + JD」发送至用户自选的大模型 API</div>
+      </div>
+      <div class="callout green"><b>关键体验设计：</b>整个流程控制在 <b>3 分钟内出结果</b>；结果区四块内容可单独复制；支持「仅本次分析，不保存任何记录」的模式，满足敏感场景。</div>
+    </section>
+
+    <!-- 04 SPEC -->
+    <section id="spec">
+      <span class="sec-tag">04 · FUNCTIONAL SPEC</span>
+      <h3>功能规格</h3>
+
+      <h4>输入规格</h4>
+      <table>
+        <thead><tr><th>输入</th><th>格式</th><th>解析方式</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>简历</td><td>PDF / DOCX / TXT</td><td>浏览器端或本地后端解析（pdf.js / mammoth / 纯文本）</td><td>解析失败提示手动粘贴文本；解析后展示「提取字数 + 命中个人信息数」</td></tr>
+          <tr><td>目标 JD</td><td>纯文本粘贴</td><td>LLM + 规则提取：行业/方向/级别/薪资/硬技能/软技能/红线</td><td>兼容从 Boss直聘 复制的内容</td></tr>
+        </tbody>
+      </table>
+
+      <h4>输出模块 · ① 岗位匹配度分析</h4>
+      <table>
+        <thead><tr><th>内容</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>总分（0–100）+ 等级</td><td>≥85 推荐投递 / 60–85 可投备选 / &lt;60 不建议</td></tr>
+          <tr><td>五维雷达图</td><td>硬技能 30% / 经验 25% / 行业 15% / 方向 15% / 软性 15%（权重可调）</td></tr>
+          <tr><td>否决项检查</td><td>学历红线、年限红线、关键技能缺失、城市不匹配 → 命中即标记「不建议投」</td></tr>
+          <tr><td>逐维点评</td><td>每维给出「匹配证据（来自简历哪句话）+ 差距 + 一句话建议」</td></tr>
+          <tr><td>差距清单</td><td>「补齐后投递命中率会更高」的 3–8 条可执行项</td></tr>
+        </tbody>
+      </table>
+
+      <h4>输出模块 · ② 简历优化建议</h4>
+      <table>
+        <thead><tr><th>内容</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>关键词覆盖率</td><td>JD 高频词 vs 简历命中情况：命中 / 缺失 / 可换同义词，逐词列出</td></tr>
+          <tr><td>STAR 量化改写</td><td>对 3–5 条重点经历给出 before → after 示例（动词开头 + 量化结果）</td></tr>
+          <tr><td>亮点条目推荐</td><td>哪几段经历与 JD 最相关，建议置顶 / 扩充</td></tr>
+          <tr><td>减分项</td><td>无关信息（如与 PM 无关的经历/证书）、弱表达、结构问题</td></tr>
+          <tr><td>诚实规则</td><td>只基于简历已有内容改写，绝不虚构项目或技能</td></tr>
+        </tbody>
+      </table>
+
+      <h4>输出模块 · ③ 打招呼话术（3 版）</h4>
+      <table>
+        <thead><tr><th>版本</th><th>风格</th><th>特征</th></tr></thead>
+        <tbody>
+          <tr><td>简洁版</td><td>30 字内直给</td><td>姓名 + 核心匹配点 + 一句最有说服力的业绩数字</td></tr>
+          <tr><td>专业版</td><td>80–120 字</td><td>JD 亮点呼应 + 2 个高匹配经历 + 表达加入意愿</td></tr>
+          <tr><td>热情版</td><td>60–100 字</td><td>对该公司/该方向有明显了解，表达强兴趣与行动意图</td></tr>
+        </tbody>
+      </table>
+      <p class="mini">每版附使用提示：Boss直聘打招呼有字数上限（约 300 字）、3 分钟内的回复窗口、建议发送时段。话术为「复制 → 手动粘贴发送」，一期不做自动发送。</p>
+
+      <h4>输出模块 · ④ 面试准备建议</h4>
+      <table>
+        <thead><tr><th>内容</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>预测题型</td><td>基于该 JD 生成 6–10 道预测题：产品设计 / 估算 / 数据指标 / 行为面，每题附答题思路</td></tr>
+          <tr><td>简历被追问点</td><td>按「高匹配经历」列出面试官最可能深挖的 3 个点 + 应答要点</td></tr>
+          <tr><td>素材清单</td><td>面试前需准备的资料：该行业认知、竞品、个人项目数据复盘</td></tr>
+          <tr><td>公司速查</td><td>可输入公司名 → 生成公司产品/竞对/阶段速查（注明 verify-before-use，需人工核实）</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 05 PRIVACY -->
+    <section id="privacy">
+      <span class="sec-tag">05 · PRIVACY</span>
+      <h3>隐私与安全设计（本期重点）</h3>
+      <div class="callout danger"><b>核心承诺：</b>除「你主动选择的大模型服务商」外，<b>不向任何服务器发送数据</b>；简历原文与 JD 仅保存在本机；默认开启脱敏。</div>
+      <div class="grid2">
+        <div class="card">
+          <h4 style="margin-top:0">数据流与本地化</h4>
+          <ul class="mini">
+            <li>简历解析、JD 解析、脱敏均在<b>本机</b>完成（浏览器或本地服务）</li>
+            <li>历史记录（可选）仅存 <code>localStorage</code> 或本地 SQLite 文件，<b>不设账号、无云同步</b></li>
+            <li>提供「用完即焚」模式：关闭页面即清除全部数据</li>
+            <li>提供「一键清除历史」按钮</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">LLM 调用前脱敏（默认开启）</h4>
+          <ul class="mini">
+            <li>规则脱敏：手机号 / 固话 / 邮箱 / 微信号 / 身份证 / 住址 → 替换为占位符（如 <code>[手机号]</code>）</li>
+            <li>姓名可选脱敏：替换为「候选人」</li>
+            <li>展示「即将发送给模型的内容」预览，用户可查看后再确认</li>
+            <li>页面明示：调用哪家模型、发送了什么内容</li>
+          </ul>
+        </div>
+      </div>
+      <h4>隐私模式矩阵</h4>
+      <table>
+        <thead><tr><th>开关</th><th>默认</th><th>效果</th></tr></thead>
+        <tbody>
+          <tr><td>脱敏发送</td><td><span class="badge b-green">开</span></td><td>敏感字段替换为占位符后再发 LLM</td></tr>
+          <tr><td>姓名脱敏</td><td><span class="badge b-amber">可配</span></td><td>简历中的姓名替换为「候选人」</td></tr>
+          <tr><td>保存历史</td><td><span class="badge b-amber">可配</span></td><td>本地保存分析记录（可一键清除）</td></tr>
+          <tr><td>用完即焚</td><td><span class="badge b-amber">可配</span></td><td>本次分析结果关闭页面即销毁</td></tr>
+        </tbody>
+      </table>
+      <p class="mini">需向用户如实说明的唯一例外：脱敏后的简历文本与 JD 会发送至用户自行配置的大模型服务商（如 DeepSeek），这是「AI 分析」功能的前提，页面须以文字明示。</p>
+    </section>
+
+    <!-- 06 TECH -->
+    <section id="tech">
+      <span class="sec-tag">06 · TECH OPTIONS</span>
+      <h3>技术方案（已确认）</h3>
+      <div class="callout green"><b>✅ 2026-08-15 已确认的技术决策：</b>① 采用<b>方案 A · 本地网页服务</b>（FastAPI 本地起服务 + 浏览器访问 localhost）；② 大模型由<b>用户自带 API Key</b>（OpenAI 兼容接口，DeepSeek/通义/GLM 任选，页面内配置）；③ 分析历史<b>本地保存、提供一键清除</b>；④ 简历解析支持 <b>PDF + Word + 纯文本</b> 全格式。</div>
+      <div class="grid2">
+        <div class="card" style="border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset;">
+          <span class="badge b-brand">方案 A · 推荐</span>
+          <h4 style="margin-top:10px">本地网页服务（Local Web App）</h4>
+          <ul class="mini">
+            <li><b>形态</b>：一条命令启动本机服务，浏览器打开 <code>localhost:8765</code></li>
+            <li><b>解析</b>：后端解析 PDF/Word（pdfminer / mammoth），支持最全</li>
+            <li><b>LLM</b>：后端调用，<b>无浏览器跨域(CORS)限制</b>，各家大模型 API 通吃</li>
+            <li><b>存储</b>：本地 SQLite / 文件，历史可管可清</li>
+            <li><b>扩展</b>：二期 Boss直聘自动化可直接挂载同一后端（Playwright）</li>
+            <li><b>成本</b>：需本机有 Python 3.11+ 环境</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge b-amber">方案 B</span>
+          <h4 style="margin-top:10px">纯静态单网页（Static Page）</h4>
+          <ul class="mini">
+            <li><b>形态</b>：单个 HTML 文件，双击浏览器打开即用，零安装</li>
+            <li><b>解析</b>：浏览器端解析（pdf.js / mammoth.js），PDF 大文件略慢</li>
+            <li><b>LLM</b>：浏览器直连模型 API —— <b>部分国内大模型接口存在 CORS 跨域限制</b>，需逐家实测</li>
+            <li><b>存储</b>：仅 localStorage，无文件级导出</li>
+            <li><b>扩展</b>：二期自动化需另起后端，与本期形态不衔接</li>
+            <li><b>成本</b>：零依赖，最轻量</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout info"><b>我的建议：方案 A。</b>理由：① 彻底规避 CORS 问题，模型选型自由（DeepSeek/通义/GLM 任选）；② 与「仅保留在本地」承诺最贴合，历史与导出可控；③ 为二期自动化预留同一后端，避免推倒重来。方案 B 的「零安装」优势可用「一键启动脚本」弥补（双击 <code>start.bat</code> 自动拉起服务并打开浏览器）。</div>
+    </section>
+
+    <!-- 07 API -->
+    <section id="api">
+      <span class="sec-tag">07 · API &amp; PROMPT</span>
+      <h3>接口与 Prompt 设计概要</h3>
+      <pre><span class="c"># 后端接口（方案 A，FastAPI）</span>
+POST /api/parse_resume      <span class="c"># 上传文件 → 提取文本 + 敏感字段定位</span>
+POST /api/parse_jd          <span class="c"># JD 文本 → 结构化(行业/方向/级别/技能/红线)</span>
+POST /api/sanitize          <span class="c"># 简历文本 → 脱敏文本（规则引擎）</span>
+POST /api/analyze           <span class="c"># 脱敏简历 + JD → 四项结果(JSON)</span>
+GET  /api/history           <span class="c"># 本地历史（可关闭）</span>
+DELETE /api/history          <span class="c"># 一键清除</span>
+
+<span class="c"># LLM Prompt 三段式（system + resume + jd），输出 JSON schema：</span>
+{
+  <span class="s">"match"</span>: {<span class="s">"score"</span>: <span class="n">87</span>, <span class="s">"tier"</span>: <span class="s">"recommend"</span>,
+            <span class="s">"dimensions"</span>: [{<span class="s">"name"</span>: <span class="s">"硬技能"</span>, <span class="s">"score"</span>: <span class="n">92</span>, <span class="s">"evidence"</span>: <span class="s">"…"</span>, <span class="s">"gap"</span>: <span class="s">"…"</span>}],
+            <span class="s">"veto"</span>: {<span class="s">"passed"</span>: <span class="k">true</span>, <span class="s">"notes"</span>: <span class="s">"…"</span>},
+            <span class="s">"gaps"</span>: [<span class="s">"…"</span>]},
+  <span class="s">"resume_tips"</span>: {<span class="s">"keywords"</span>: {<span class="s">"hit"</span>: [], <span class="s">"miss"</span>: [], <span class="s">"suggest"</span>: []},
+                   <span class="s">"rewrites"</span>: [{<span class="s">"before"</span>: <span class="s">"…"</span>, <span class="s">"after"</span>: <span class="s">"…"</span>}]},
+  <span class="s">"greetings"</span>: {<span class="s">"concise"</span>: <span class="s">"…"</span>, <span class="s">"professional"</span>: <span class="s">"…"</span>, <span class="s">"enthusiastic"</span>: <span class="s">"…"</span>},
+  <span class="s">"interview"</span>: {<span class="s">"questions"</span>: [{<span class="s">"type"</span>: <span class="s">"估算题"</span>, <span class="s">"question"</span>: <span class="s">"…"</span>, <span class="s">"approach"</span>: <span class="s">"…"</span>}],
+                 <span class="s">"probe_points"</span>: [<span class="s">"…"</span>], <span class="s">"materials"</span>: [<span class="s">"…"</span>]}
+}</pre>
+      <p class="mini">Prompt 内置规则：以资深产品经理招聘视角评审；只基于简历已有内容，不虚构；输出严格 JSON；公司类事实信息标注「需人工核实」。</p>
+    </section>
+
+    <!-- 08 ACCEPT -->
+    <section id="accept">
+      <span class="sec-tag">08 · ACCEPTANCE</span>
+      <h3>验收标准</h3>
+      <ul>
+        <li><b>流程</b>：上传简历 → 粘贴 JD → 分析 → 四项结果齐全，全程 ≤ 3 分钟（常规模型）</li>
+        <li><b>匹配度</b>：五维雷达 + 否决项 + 差距清单正确生成，且能指出简历中具体证据句</li>
+        <li><b>优化建议</b>：关键词覆盖率逐词列出；至少 3 条 STAR before→after 改写示例</li>
+        <li><b>话术</b>：3 版可复制，符合 Boss直聘打招呼语境与字数限制</li>
+        <li><b>隐私</b>：默认脱敏生效（测试简历中的手机/邮箱被替换）；「即将发送给模型的内容」可预览；无任何第三方请求（除用户配置的 LLM）</li>
+        <li><b>健壮性</b>：解析失败的简历有降级路径（手动粘贴文本）；LLM 接口报错有友好提示与重试</li>
+      </ul>
+    </section>
+
+    <!-- 09 PHASE2 -->
+    <section id="phase2">
+      <span class="sec-tag">09 · NEXT</span>
+      <h3>二期衔接（本期之后）</h3>
+      <table>
+        <thead><tr><th>二期能力</th><th>与本期关系</th></tr></thead>
+        <tbody>
+          <tr><td>Boss直聘自动化（搜索/详情）</td><td>在本期后端（方案 A）挂 Playwright 适配器，沿用 v1.0 蓝图的风控纪律</td></tr>
+          <tr><td>打招呼自动发送</td><td>本期话术由「复制粘贴」升级为「人工确认后自动发送」，需在 v1.0 半自动闸门设计下进行</td></tr>
+          <tr><td>投递追踪看板</td><td>复用本期历史存储，扩展投递状态机</td></tr>
+          <tr><td>面试模拟对话</td><td>复用本期面试建议，升级为多轮对话练习</td></tr>
+        </tbody>
+      </table>
+      <p class="mini">v1.0 蓝图中的五维评分、PM 八维雷达、诚实规则、verify-before-use 等设计原则，本期内即已生效。</p>
+    </section>
+
+    <div class="footer">
+      <p><b>版本关系：</b>v1.0 = 长期蓝图（六阶段闭环 / 平台适配层 / 投递追踪）；v1.1 = 本期落地范围（Web 网页 · 简历×JD 分析 · 四项输出 · 本地化隐私）。</p>
+      <p style="margin-top:6px"><b>免责声明：</b>本期为纯分析工具，不涉及平台自动化；LLM 调用需用户自行配置 API Key，相关费用与数据出境由用户自主决策。</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

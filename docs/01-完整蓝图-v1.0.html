@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM 智投 · 中国大陆互联网产品经理 AI 求职工具 · 设计文档</title>
+<style>
+  :root{
+    --bg:#f5f6fa; --card:#ffffff; --ink:#1c2333; --ink2:#4a5468; --ink3:#8a93a6;
+    --line:#e4e8f0; --brand:#3b5bdb; --brand-d:#2f49b0; --brand-soft:#eef1fd;
+    --amber:#d97706; --amber-soft:#fdf3e3; --green:#0e9f6e; --green-soft:#e6f7f0;
+    --red:#d64545; --red-soft:#fdeaea; --purple:#7c3aed; --purple-soft:#f3edfe;
+    --mono:'Cascadia Code','JetBrains Mono',Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;}
+  ::selection{background:var(--brand);color:#fff;}
+
+  /* ---------- Layout ---------- */
+  .layout{display:flex;max-width:1400px;margin:0 auto;}
+  .sidebar{position:sticky;top:0;height:100vh;width:264px;flex-shrink:0;padding:28px 12px 28px 20px;overflow-y:auto;border-right:1px solid var(--line);background:var(--card);}
+  .main{flex:1;min-width:0;padding:0 56px 80px;max-width:960px;}
+  .logo{display:flex;align-items:center;gap:10px;padding:6px 10px 20px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+  .logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4c6ef5,#364fc7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0;}
+  .logo h1{font-size:16px;line-height:1.3;}
+  .logo p{font-size:11px;color:var(--ink3);}
+  .nav a{display:flex;gap:8px;align-items:baseline;padding:7px 10px;border-radius:8px;color:var(--ink2);text-decoration:none;font-size:13.5px;margin:1px 0;}
+  .nav a .no{font-family:var(--mono);font-size:11px;color:var(--ink3);flex-shrink:0;}
+  .nav a:hover{background:var(--brand-soft);color:var(--brand);}
+  .nav a.on{background:var(--brand-soft);color:var(--brand-d);font-weight:600;}
+  .nav .grp{font-size:11px;color:var(--ink3);padding:14px 10px 4px;letter-spacing:.08em;}
+  .side-note{margin:18px 10px 0;padding:12px;background:var(--amber-soft);border:1px solid #f5dfb8;border-radius:10px;font-size:11.5px;color:#8a5a12;line-height:1.6;}
+
+  /* ---------- Typography ---------- */
+  .hero{padding:56px 0 30px;}
+  .tagline{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px;letter-spacing:.04em;}
+  .hero h2{font-size:34px;line-height:1.25;font-weight:800;letter-spacing:-.01em;}
+  .hero .sub{margin-top:14px;color:var(--ink2);font-size:16px;max-width:720px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+  .chip{font-size:12px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink2);}
+  .chip b{color:var(--ink);font-weight:600;}
+  section{padding:44px 0 8px;border-top:1px solid var(--line);margin-top:40px;}
+  .sec-tag{font-family:var(--mono);font-size:12px;color:var(--brand);font-weight:700;letter-spacing:.1em;}
+  h3{font-size:23px;font-weight:750;margin:8px 0 6px;letter-spacing:-.01em;}
+  .lead{color:var(--ink2);font-size:15px;margin-bottom:20px;max-width:760px;}
+  h4{font-size:16.5px;font-weight:700;margin:26px 0 10px;display:flex;align-items:center;gap:8px;}
+  h4::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--brand);display:inline-block;}
+  p{margin:10px 0;}
+  strong{color:var(--ink);}
+  ul,ol{margin:10px 0 10px 22px;}
+  li{margin:5px 0;}
+  code{font-family:var(--mono);font-size:12.5px;background:#eef0f6;color:#35407a;padding:2px 6px;border-radius:5px;}
+  pre{background:#141a2a;color:#dfe6f5;border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.7;margin:14px 0;}
+  pre .c{color:#6b7a99;}
+  pre .k{color:#7cc7ff;}
+  pre .s{color:#a5e6a5;}
+  pre .n{color:#ffb86c;}
+
+  /* ---------- Cards / Tables ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:14px 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  @media(max-width:1000px){.grid2,.grid3{grid-template-columns:1fr;}.sidebar{display:none;}.main{padding:0 24px 60px;}}
+  .mini{font-size:12.5px;color:var(--ink3);}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em;}
+  .b-brand{background:var(--brand-soft);color:var(--brand-d);}
+  .b-amber{background:var(--amber-soft);color:var(--amber);}
+  .b-green{background:var(--green-soft);color:var(--green);}
+  .b-red{background:var(--red-soft);color:var(--red);}
+  .b-purple{background:var(--purple-soft);color:var(--purple);}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;background:var(--card);border-radius:12px;overflow:hidden;}
+  th{background:#f0f2f9;text-align:left;padding:10px 14px;font-size:12.5px;color:var(--ink2);border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td .mono{font-family:var(--mono);font-size:12px;}
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:2px 14px;font-size:13.5px;}
+  .kv dt{color:var(--ink2);font-weight:600;}
+  .kv dd{margin:0;}
+  .callout{border-radius:12px;padding:14px 18px;margin:14px 0;font-size:14px;}
+  .callout.warn{background:var(--amber-soft);border:1px solid #f0ddb0;color:#7c5210;}
+  .callout.info{background:var(--brand-soft);border:1px solid #d6defb;color:#33408f;}
+  .callout.danger{background:var(--red-soft);border:1px solid #f2cccc;color:#8c2f2f;}
+
+  /* ---------- Diagram ---------- */
+  .figure{margin:20px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;}
+  .figure .cap{font-size:12.5px;color:var(--ink3);text-align:center;margin-top:10px;}
+  .figure svg{display:block;width:100%;height:auto;}
+  .arch-layer{fill:#fff;stroke:#c9d3ef;stroke-width:1.2;}
+  .arch-label{font-size:11.5px;font-weight:700;fill:#3b5bdb;}
+  .arch-item{fill:#eef1fd;stroke:#c9d3ef;stroke-width:1;}
+  .arch-item text{fill:#1c2333;font-size:11px;font-family:var(--sans);}
+  .flow-node{fill:#fff;stroke:#c9d3ef;}
+  .flow-node text{font-size:11.5px;fill:#1c2333;font-weight:600;font-family:var(--sans);}
+  .flow-arrow{stroke:#9aa8cf;stroke-width:1.5;fill:none;}
+  .flow-arrow-text{font-size:10px;fill:#8a93a6;font-family:var(--sans);}
+  .step-num{font-family:var(--mono);font-size:10px;fill:#3b5bdb;font-weight:700;}
+
+  .footer{margin-top:60px;padding:26px 0 10px;border-top:1px solid var(--line);color:var(--ink3);font-size:12.5px;}
+  .footer a{color:var(--brand);text-decoration:none;}
+  .toc-mini{display:none;}
+  @media print{.sidebar{display:none;}.main{max-width:none;padding:0;}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">PM</div>
+      <div>
+        <h1>PM 智投</h1>
+        <p>Product Manager Job Scout</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="grp">OVERVIEW</div>
+      <a href="#intro"><span class="no">01</span>背景与定位</a>
+      <a href="#persona"><span class="no">02</span>用户与场景</a>
+      <a href="#workflow"><span class="no">03</span>核心工作流</a>
+      <a href="#arch"><span class="no">04</span>系统架构</a>
+      <div class="grp">CORE DESIGN</div>
+      <a href="#platform"><span class="no">05</span>平台接入层 · Boss直聘</a>
+      <a href="#engine"><span class="no">06</span>PM 智能引擎</a>
+      <a href="#commands"><span class="no">07</span>模块规格</a>
+      <a href="#data"><span class="no">08</span>数据模型</a>
+      <div class="grp">ENGINEERING</div>
+      <a href="#stack"><span class="no">09</span>技术选型</a>
+      <a href="#compliance"><span class="no">10</span>合规与风控</a>
+      <a href="#roadmap"><span class="no">11</span>路线图</a>
+      <a href="#structure"><span class="no">12</span>目录结构</a>
+    </nav>
+    <div class="side-note">⚠️ 自动化操作招聘平台存在账号风控风险。本设计采用「自动搜索评估 + 人工确认投递」的半自动模式，投递前必须人工复核。</div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <!-- ===== HERO ===== -->
+    <div class="hero">
+      <span class="tagline">DESIGN DOC · v1.0 · 灵感源自 ai-job-search</span>
+      <h2>PM 智投 —— 面向中国大陆互联网产品经理的<br>AI 求职智能体</h2>
+      <p class="sub">仿照开源项目 <a href="https://github.com/MadsLorentzen/ai-job-search" style="color:var(--brand)">MadsLorentzen/ai-job-search</a> 的「跑在你机器上的求职」理念，针对中国求职市场重新设计：<b>至少支持 Boss直聘</b>，覆盖 建档 → 搜岗 → 评估 → 申请 → 备战 → 追踪 全流程。</p>
+      <div class="meta">
+        <span class="chip"><b>定位</b> 个人本地工具 · 半自动</span>
+        <span class="chip"><b>核心平台</b> Boss直聘</span>
+        <span class="chip"><b>扩展平台</b> 拉勾 / 猎聘 / 智联 / 前程无忧</span>
+        <span class="chip"><b>目标用户</b> 互联网产品经理</span>
+        <span class="chip"><b>设计日期</b> 2026-08-15</span>
+      </div>
+    </div>
+
+    <!-- ===== 01 INTRO ===== -->
+    <section id="intro">
+      <span class="sec-tag">01 · OVERVIEW</span>
+      <h3>背景与定位</h3>
+      <p class="lead">为什么在「ai-job-search」之外还需要一个中国版？核心差异在于三件事：<b>平台生态、简历形态、岗位语义</b>。</p>
+
+      <div class="grid2">
+        <div class="card">
+          <h4 style="margin-top:0">原项目启发（值得继承）</h4>
+          <ul>
+            <li><b>命令式工作流</b>：/setup → /scrape → /rank → /apply，把复杂求职拆成可复现步骤</li>
+            <li><b>双 Agent 起草-评审</b>：求职信/简历由起草 Agent 生成、独立评审 Agent 批判修订</li>
+            <li><b>门户适配器解耦</b>：每个招聘平台一个独立 skill/适配器，可插拔扩展</li>
+            <li><b>PDF 验证循环</b>：编译后视觉检查 + ATS 文本层校验</li>
+            <li><b>诚实规则</b>：资料不支持的技能标记为差距，绝不虚构</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">必须本土化改造（中国市场差异）</h4>
+          <ul>
+            <li><b>平台无开放 API</b>：Boss直聘等仅对企业端开放接口 → 采用浏览器自动化 + 登录态复用</li>
+            <li><b>风控严苛</b>：反爬策略强、账号封禁成本高 → 半自动模式、频率纪律、人工闸门</li>
+            <li><b>简历中文 + ATS</b>：北森/Moka/用友大易解析中文简历，关键词覆盖率是核心</li>
+            <li><b>岗位语义特殊</b>：PM 岗位按 行业×方向×级别 三维分化（B端/C端/AI产品/数据产品…）</li>
+            <li><b>LLM 选型</b>：需兼容 DeepSeek / 通义 / GLM 等国内模型，而非仅 Claude</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout info"><b>产品定位一句话：</b>一个运行在你本地电脑上的「产品经理求职副驾驶」——它替你<b>自动找</b>（跨平台搜岗、按 JD 匹配评分）、<b>帮你写</b>（定制简历、打招呼语、面试模拟）、<b>帮你管</b>（投递看板、跟进提醒），但<b>不替你发</b>（所有对外动作需人工确认）。</div>
+
+      <h4>设计原则</h4>
+      <div class="grid3">
+        <div class="card" style="padding:14px 16px"><b>① 半自动而非全自动</b><br><span class="mini">「找与评」自动，「发与投」人工。投递、打招呼、回复消息均需人工确认，规避封号风险。</span></div>
+        <div class="card" style="padding:14px 16px"><b>② 隐私本地化</b><br><span class="mini">档案、简历、聊天记录全部本地 SQLite 存储，凭证留在浏览器，符合个人信息保护要求。</span></div>
+        <div class="card" style="padding:14px 16px"><b>③ PM 语义优先</b><br><span class="mini">匹配引擎理解「行业×方向×级别」，而非简单关键词命中；技能雷达按产品经理能力模型建模。</span></div>
+      </div>
+    </section>
+
+    <!-- ===== 02 PERSONA ===== -->
+    <section id="persona">
+      <span class="sec-tag">02 · USERS</span>
+      <h3>用户画像与核心场景</h3>
+      <p class="lead">中国大陆互联网产品经理求职的三类典型用户，以及他们各自最痛的环节。</p>
+      <table>
+        <thead><tr><th>用户群</th><th>特征</th><th>最痛环节</th><th>本工具价值</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>中高级 PM</b><br><span class="badge b-brand">3-8 年</span></td>
+            <td>B/C端、数据、AI 等方向，海投 50-100 份，在意「岗位匹配度」与「薪资对标」</td>
+            <td>JD 良莠不齐，投完不知道是否匹配；简历千篇一律</td>
+            <td>JD 解析 + 五维评分 + 简历按岗定制 + 薪资对标</td>
+          </tr>
+          <tr>
+            <td><b>初级 PM / 应届</b><br><span class="badge b-amber">0-2 年</span></td>
+            <td>缺少完整项目经验，简历内容单薄，面试易被问「没有实战」</td>
+            <td>简历没亮点、面试不会讲项目、不知道差距在哪</td>
+            <td>STAR 量化改写 + 技能雷达补短板 + 面试模拟练习</td>
+          </tr>
+          <tr>
+            <td><b>转岗/转型 PM</b><br><span class="badge b-purple">运营/开发/设计 → PM</span></td>
+            <td>具备相邻领域经验，需向 HR 证明「可迁移能力」</td>
+            <td>简历不知如何呈现迁移价值，投递回复率低</td>
+            <td>能力迁移映射（原技能→PM 能力）+ 作品集组织</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>高频使用场景</h4>
+      <div class="grid2">
+        <div class="card"><b>场景 A · 每日晨间巡检</b><br><span class="mini">上班前 10 分钟，/scrape 拉取 Boss直聘 + 拉勾的新职位，自动去重、评分，看板高亮「今日新增高匹配」岗位。</span></div>
+        <div class="card"><b>场景 B · 针对性投递</b><br><span class="mini">锁定 3-5 个目标公司/方向，/apply 为每个 JD 生成定制简历与个性化打招呼语，人工确认后由适配器代发。</span></div>
+        <div class="card"><b>场景 C · 面试备战</b><br><span class="mini">收到面试邀约后，/interview 拉取该公司产品与竞品信息，生成行为面 + 产品设计题 + 估算题题库，附 STAR 回答骨架。</span></div>
+        <div class="card"><b>场景 D · 全局掌控</b><br><span class="mini">投递 30+ 后失联焦虑。/track 输出离线 HTML 看板：各阶段漏斗、沉默超 7 天的岗位提醒、跟进邮件/消息草稿。</span></div>
+      </div>
+    </section>
+
+    <!-- ===== 03 WORKFLOW ===== -->
+    <section id="workflow">
+      <span class="sec-tag">03 · WORKFLOW</span>
+      <h3>核心工作流：六阶段求职闭环</h3>
+      <p class="lead">继承原项目的命令式流程，扩展为贴合中国市场与 PM 岗位的六阶段闭环。每阶段产出物作为下一阶段输入，全部数据落本地库。</p>
+
+      <div class="figure">
+        <svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#9aa8cf"/>
+            </marker>
+          </defs>
+          <!-- row 1 -->
+          <g>
+            <rect x="20" y="30" width="126" height="78" rx="10" class="flow-node"/>
+            <text x="83" y="56" text-anchor="middle" class="flow-node-text" style="font-size:13px;font-weight:700">/setup</text>
+            <text x="83" y="74" text-anchor="middle" style="font-size:10px;fill:#8a93a6">建档</text>
+            <text x="83" y="90" text-anchor="middle" style="font-size:10px;fill:#5a6478">档案 + 求职意向</text>
+          </g>
+          <g>
+            <rect x="186" y="30" width="126" height="78" rx="10" class="flow-node"/>
+            <text x="249" y="56" text-anchor="middle" class="flow-node-text" style="font-size:13px;font-weight:700">/scrape</text>
+            <text x="249" y="74" text-anchor="middle" style="font-size:10px;fill:#8a93a6">搜岗</text>
+            <text x="249" y="90" text-anchor="middle" style="font-size:10px;fill:#5a6478">跨平台抓取去重</text>
+          </g>
+          <g>
+            <rect x="352" y="30" width="126" height="78" rx="10" class="flow-node"/>
+            <text x="415" y="56" text-anchor="middle" class="flow-node-text" style="font-size:13px;font-weight:700">/rank</text>
+            <text x="415" y="74" text-anchor="middle" style="font-size:10px;fill:#8a93a6">评估</text>
+            <text x="415" y="90" text-anchor="middle" style="font-size:10px;fill:#5a6478">五维匹配评分</text>
+          </g>
+          <g>
+            <rect x="518" y="30" width="126" height="78" rx="10" class="flow-node"/>
+            <text x="581" y="56" text-anchor="middle" class="flow-node-text" style="font-size:13px;font-weight:700">/apply</text>
+            <text x="581" y="74" text-anchor="middle" style="font-size:10px;fill:#8a93a6">申请</text>
+            <text x="581" y="90" text-anchor="middle" style="font-size:10px;fill:#5a6478">定制简历+打招呼</text>
+          </g>
+          <g>
+            <rect x="684" y="30" width="126" height="78" rx="10" class="flow-node"/>
+            <text x="747" y="56" text-anchor="middle" class="flow-node-text" style="font-size:13px;font-weight:700">/interview</text>
+            <text x="747" y="74" text-anchor="middle" style="font-size:10px;fill:#8a93a6">备战</text>
+            <text x="747" y="90" text-anchor="middle" style="font-size:10px;fill:#5a6478">公司研究+模拟题</text>
+          </g>
+          <g>
+            <rect x="830" y="30" width="50" height="78" rx="10" class="flow-node" style="fill:#eef1fd"/>
+            <text x="855" y="74" text-anchor="middle" style="font-size:10px;fill:#5a6478">/track</text>
+          </g>
+          <!-- arrows -->
+          <path class="flow-arrow" d="M146,69 H186" marker-end="url(#arr)"/>
+          <path class="flow-arrow" d="M312,69 H352" marker-end="url(#arr)"/>
+          <path class="flow-arrow" d="M478,69 H518" marker-end="url(#arr)"/>
+          <path class="flow-arrow" d="M644,69 H684" marker-end="url(#arr)"/>
+          <path class="flow-arrow" d="M810,69 H830" marker-end="url(#arr)"/>
+          <!-- feedback -->
+          <path class="flow-arrow" d="M855,108 L855,150 L83,150 L83,112" marker-end="url(#arr)" style="stroke-dasharray:5 4"/>
+          <text x="470" y="140" text-anchor="middle" class="flow-arrow-text">面试结果 / 沟通反馈回流，反哺档案与评分权重</text>
+          <!-- output chips row -->
+          <g>
+            <rect x="20" y="168" width="180" height="26" rx="13" fill="#eef1fd" stroke="#c9d3ef"/>
+            <text x="110" y="185" text-anchor="middle" style="font-size:10.5px;fill:#33408f">profile.json / 求职意向</text>
+            <rect x="220" y="168" width="180" height="26" rx="13" fill="#eef1fd" stroke="#c9d3ef"/>
+            <text x="310" y="185" text-anchor="middle" style="font-size:10.5px;fill:#33408f">jobs.jsonl（跨平台去重）</text>
+            <rect x="420" y="168" width="180" height="26" rx="13" fill="#eef1fd" stroke="#c9d3ef"/>
+            <text x="510" y="185" text-anchor="middle" style="font-size:10.5px;fill:#33408f">短名单 + 差距报告</text>
+            <rect x="620" y="168" width="180" height="26" rx="13" fill="#fdeaea" stroke="#f2cccc"/>
+            <text x="710" y="185" text-anchor="middle" style="font-size:10.5px;fill:#8c2f2f">⚠ 人工确认后投递</text>
+          </g>
+        </svg>
+        <div class="cap">图 1 · 六阶段求职闭环（虚线为反馈回流，红框为人工闸门）</div>
+      </div>
+
+      <h4>与 ai-job-search 的功能映射</h4>
+      <table>
+        <thead><tr><th>原项目命令</th><th>本设计对应</th><th>本土化改造点</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">/setup</td><td class="mono">/setup</td><td>增加「PM 能力模型」结构化建档（行业方向/作品集/技能自评），简历支持 Word/PDF/在线链接导入</td></tr>
+          <tr><td class="mono">/scrape</td><td class="mono">/scrape</td><td>门户适配器改为 Playwright 浏览器自动化；Boss直聘为主，需登录态复用</td></tr>
+          <tr><td class="mono">/rank</td><td class="mono">/rank</td><td>评分模型替换为 PM 五维模型 + 硬性否决（学历/年限红线），而非通用技能匹配</td></tr>
+          <tr><td class="mono">/apply</td><td class="mono">/apply</td><td>产出改为「定制简历 PDF + 个性化打招呼语」；投递动作默认人工确认（原项目是自动提交）</td></tr>
+          <tr><td class="mono">/interview</td><td class="mono">/interview</td><td>题库换成中国产品经理面试题型（产品设计/估算/行为面），公司研究覆盖公众号/即刻/脉脉信源</td></tr>
+          <tr><td class="mono">/outcome</td><td class="mono">/track</td><td>跟踪窗口改为 7 天（原项目 10 天），跟进渠道为 Boss直聘 消息而非邮件</td></tr>
+          <tr><td class="mono">/upskill</td><td class="mono">/radar</td><td>能力模型替换为产品经理八维技能雷达，热力图给出「补短板优先级」</td></tr>
+          <tr><td class="mono">/html-report</td><td class="mono">/track --report</td><td>内联 SVG/JS 的离线看板，适配中文漏斗与状态</td></tr>
+          <tr><td class="mono">/add-portal</td><td class="mono">/add-platform</td><td>生成 Playwright 平台适配器脚手架，含风控参数模板</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== 04 ARCH ===== -->
+    <section id="arch">
+      <span class="sec-tag">04 · ARCHITECTURE</span>
+      <h3>系统架构</h3>
+      <p class="lead">四层架构：交互层 → 编排层 → 智能层 → 平台层，数据统一落在本地存储层。所有 Agent 能力通过「适配器接口」与平台解耦。</p>
+
+      <div class="figure">
+        <svg viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg">
+          <!-- Layer 5: interaction -->
+          <rect x="30" y="20" width="840" height="64" rx="12" class="arch-layer"/>
+          <text x="50" y="43" class="arch-label">交互层 · Interaction</text>
+          <g>
+            <rect x="50" y="52" width="150" height="24" rx="6" class="arch-item"/><text x="125" y="68" text-anchor="middle">CLI 命令 (/setup …)</text>
+            <rect x="215" y="52" width="150" height="24" rx="6" class="arch-item"/><text x="290" y="68" text-anchor="middle">离线 HTML 看板</text>
+            <rect x="380" y="52" width="150" height="24" rx="6" class="arch-item"/><text x="455" y="68" text-anchor="middle">人工确认闸门 UI</text>
+            <rect x="545" y="52" width="160" height="24" rx="6" class="arch-item"/><text x="625" y="68" text-anchor="middle">cron 定时巡检</text>
+          </g>
+          <!-- Layer 4: orchestration -->
+          <rect x="30" y="104" width="840" height="78" rx="12" class="arch-layer"/>
+          <text x="50" y="127" class="arch-label">编排层 · Orchestration</text>
+          <g>
+            <rect x="50" y="136" width="130" height="38" rx="6" class="arch-item"/><text x="115" y="151" text-anchor="middle">命令路由器</text><text x="115" y="166" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">解析参数/校验状态</text>
+            <rect x="195" y="136" width="130" height="38" rx="6" class="arch-item"/><text x="260" y="151" text-anchor="middle">Agent 循环</text><text x="260" y="166" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">工具调用编排</text>
+            <rect x="340" y="136" width="130" height="38" rx="6" class="arch-item"/><text x="405" y="151" text-anchor="middle">起草-评审双 Agent</text><text x="405" y="166" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">简历/话术生成</text>
+            <rect x="485" y="136" width="130" height="38" rx="6" class="arch-item"/><text x="550" y="151" text-anchor="middle">人工确认点</text><text x="550" y="166" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">发送前必须确认</text>
+            <rect x="630" y="136" width="130" height="38" rx="6" class="arch-item"/><text x="695" y="151" text-anchor="middle">LLM 适配器</text><text x="695" y="166" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">DeepSeek/通义/GLM</text>
+          </g>
+          <!-- Layer 3: intelligence -->
+          <rect x="30" y="202" width="840" height="92" rx="12" class="arch-layer"/>
+          <text x="50" y="225" class="arch-label">智能层 · PM Intelligence</text>
+          <g>
+            <rect x="50" y="236" width="150" height="48" rx="6" class="arch-item"/><text x="125" y="254" text-anchor="middle">JD 解析器</text><text x="125" y="272" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">行业/方向/级别/硬技能</text>
+            <rect x="212" y="236" width="150" height="48" rx="6" class="arch-item"/><text x="287" y="254" text-anchor="middle">五维匹配引擎</text><text x="287" y="272" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">评分+否决+差距分析</text>
+            <rect x="374" y="236" width="150" height="48" rx="6" class="arch-item"/><text x="449" y="254" text-anchor="middle">简历诊断</text><text x="449" y="272" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">关键词覆盖率/ATS/STAR</text>
+            <rect x="536" y="236" width="150" height="48" rx="6" class="arch-item"/><text x="611" y="254" text-anchor="middle">技能雷达</text><text x="611" y="272" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">PM 八维能力差距</text>
+            <rect x="698" y="236" width="150" height="48" rx="6" class="arch-item"/><text x="773" y="254" text-anchor="middle">面试模拟器</text><text x="773" y="272" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">题库+STAR 骨架</text>
+          </g>
+          <!-- Layer 2: platform -->
+          <rect x="30" y="314" width="840" height="78" rx="12" class="arch-layer"/>
+          <text x="50" y="337" class="arch-label">平台层 · Platform Adapters（统一接口：search / detail / company / apply / messages）</text>
+          <g>
+            <rect x="50" y="348" width="155" height="34" rx="6" class="arch-item" style="fill:#fdeaea"/><text x="127" y="363" text-anchor="middle" style="font-weight:700">Boss直聘 · P0</text><text x="127" y="376" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">Playwright+登录态</text>
+            <rect x="217" y="348" width="155" height="34" rx="6" class="arch-item"/><text x="294" y="363" text-anchor="middle">拉勾 · P1</text><text x="294" y="376" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">浏览器自动化</text>
+            <rect x="384" y="348" width="155" height="34" rx="6" class="arch-item"/><text x="461" y="363" text-anchor="middle">猎聘 · P1</text><text x="461" y="376" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">浏览器自动化</text>
+            <rect x="551" y="348" width="155" height="34" rx="6" class="arch-item"/><text x="628" y="363" text-anchor="middle">智联/前程无忧 · P2</text><text x="628" y="376" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">浏览器自动化</text>
+            <rect x="718" y="348" width="140" height="34" rx="6" class="arch-item" style="fill:#eef1fd"/><text x="788" y="363" text-anchor="middle">/add-platform</text><text x="788" y="376" text-anchor="middle" style="font-size:9.5px;fill:#8a93a6">适配器脚手架</text>
+          </g>
+          <!-- Layer 1: data -->
+          <rect x="30" y="412" width="840" height="48" rx="12" class="arch-layer"/>
+          <text x="50" y="433" class="arch-label">数据层 · Storage（本地）</text>
+          <g>
+            <rect x="50" y="424" width="160" height="26" rx="6" class="arch-item"/><text x="130" y="441" text-anchor="middle">SQLite（档案/职位/投递/消息）</text>
+            <rect x="225" y="424" width="160" height="26" rx="6" class="arch-item"/><text x="305" y="441" text-anchor="middle">JSONL（抓取原始快照）</text>
+            <rect x="400" y="424" width="160" height="26" rx="6" class="arch-item"/><text x="480" y="441" text-anchor="middle">文件（简历PDF/作品集）</text>
+            <rect x="575" y="424" width="180" height="26" rx="6" class="arch-item"/><text x="665" y="441" text-anchor="middle">薪资对标库（本地 JSON）</text>
+          </g>
+        </svg>
+        <div class="cap">图 2 · 四层架构 + 本地数据层（Boss直聘为 P0 适配器，红色高亮）</div>
+      </div>
+    </section>
+
+    <!-- ===== 05 PLATFORM ===== -->
+    <section id="platform">
+      <span class="sec-tag">05 · PLATFORM LAYER</span>
+      <h3>平台接入层设计（重点：Boss直聘）</h3>
+      <p class="lead">中国大陆招聘平台<b>均无公开的职位开放 API</b>（Boss直聘仅对企业端开放，需企业认证）。因此接入层统一采用「浏览器自动化 + 复用用户本机登录态」方案，并建立统一适配器接口与风控纪律。</p>
+
+      <h4>接入方案对比</h4>
+      <table>
+        <thead><tr><th>方案</th><th>可行性</th><th>稳定性</th><th>合规风险</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">官方 API / 企业开放平台</td>
+            <td>❌ 个人开发者无法申请</td>
+            <td>—</td><td>—</td>
+            <td><span class="badge b-red">不可行</span></td>
+          </tr>
+          <tr>
+            <td class="mono">直连 wapi 接口（如 joblist.json）</td>
+            <td>社区逆向可用</td><td>低（接口随时变更）</td><td>高（绕过登录态，易触发风控）</td>
+            <td><span class="badge b-red">不采用</span></td>
+          </tr>
+          <tr>
+            <td class="mono">Playwright 持久化浏览器上下文</td>
+            <td>✅ 扫码登录一次，会话持久化</td><td>高（跟随页面改版即可）</td><td>中（需频率纪律）</td>
+            <td><span class="badge b-green">主方案</span></td>
+          </tr>
+          <tr>
+            <td class="mono">CDP 复用 Chrome 登录态（OpenCLI 模式）</td>
+            <td>✅ 凭证不出浏览器</td><td>高</td><td>中</td>
+            <td><span class="badge b-green">备选</span></td>
+          </tr>
+          <tr>
+            <td class="mono">集成开源 boss-cli（kabi-boss-cli）</td>
+            <td>✅ 已含搜索/投递/打招呼/面试接口</td><td>中（随上游更新）</td><td>中（其内置 1.5s 风控延迟，可复用其经验）</td>
+            <td><span class="badge b-amber">参考集成</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn"><b>接入原则：</b>① 只用<b>自己的账号</b>登录态，凭证留在浏览器；② 只自动化「读与评」（搜索/详情/公司/状态），「写与投」（打招呼/投递/回复）一律走人工确认闸门；③ 遇到验证码或异常风控提示，<b>立即停止并通知用户人工处理</b>，绝不尝试绕过。</div>
+
+      <h4>Boss直聘适配器（boss-adapter）能力规格</h4>
+      <table>
+        <thead><tr><th>能力</th><th>方法</th><th>输入 → 输出</th><th>人工闸门</th></tr></thead>
+        <tbody>
+          <tr><td>职位搜索</td><td class="mono">search_jobs</td><td>query + 城市码 + 筛选（薪资/经验/学历/行业/融资阶段） → 职位卡片列表（标题/公司/薪资标签/链接）</td><td>无需</td></tr>
+          <tr><td>职位详情</td><td class="mono">get_job_detail</td><td>jobId → JD 全文 + 岗位标签 + 公司信息 + 沟通 BOSS 身份</td><td>无需</td></tr>
+          <tr><td>公司画像</td><td class="mono">get_company_profile</td><td>companyId → 规模/阶段/行业/在招职位</td><td>无需</td></tr>
+          <tr><td>沟通状态</td><td class="mono">list_conversations</td><td>— → 已投递/沟通过/面试邀请/新消息</td><td>无需</td></tr>
+          <tr><td>打招呼 / 投递</td><td class="mono">send_greeting</td><td>bossId + 个性化话术 → 发送结果</td><td><span class="badge b-red">必须人工确认</span></td></tr>
+          <tr><td>回复消息</td><td class="mono">reply_message</td><td>会话 + 草稿 → 发送结果</td><td><span class="badge b-red">必须人工确认</span></td></tr>
+        </tbody>
+      </table>
+
+      <h4>风控纪律（内置默认值，可配置）</h4>
+      <div class="grid2">
+        <div class="card">
+          <b>请求节奏</b>
+          <ul class="mini" style="margin-top:6px">
+            <li>搜索间隔：<b>3–8 秒随机抖动</b>（默认 5s）</li>
+            <li>打招呼间隔：≥ <b>1.5s + 随机 1–3s</b>（参考 boss-cli 经验值）</li>
+            <li>单次任务上限：搜索 ≤ 20 页；打招呼 ≤ 50 次/天</li>
+            <li>整点高峰（9:00–11:00）可配「保守模式」降频</li>
+          </ul>
+        </div>
+        <div class="card">
+          <b>异常处置</b>
+          <ul class="mini" style="margin-top:6px">
+            <li>检测到验证码 / 「操作频繁」提示 → <b>立即中止</b>，写入事件日志并桌面通知</li>
+            <li>同 IP 登录异地提醒 → 暂停所有写操作</li>
+            <li>操作失败重试 ≤ 2 次，指数退避</li>
+            <li>每日写操作总次数超限 → 锁死至次日</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>统一适配器接口（平台无关契约）</h4>
+      <pre><span class="c"># adapters/base.py — 所有平台实现该协议</span>
+<span class="k">class</span> <span class="n">JobAdapter</span>:
+    platform: <span class="n">str</span>                 <span class="c"># "boss" | "lagou" | "liepin" ...</span>
+
+    <span class="k">def</span> <span class="n">search_jobs</span>(self, query: <span class="n">str</span>, city: <span class="n">str</span>,
+                      filters: <span class="n">dict</span>) -> <span class="n">list</span>[JobCard]: ...
+    <span class="k">def</span> <span class="n">get_job_detail</span>(self, job_id: <span class="n">str</span>) -> JobDetail: ...
+    <span class="k">def</span> <span class="n">get_company_profile</span>(self, company_id: <span class="n">str</span>) -> Company: ...
+    <span class="k">def</span> <span class="n">list_conversations</span>(self) -> <span class="n">list</span>[Conversation]: ...
+
+    <span class="c"># —— 以下为写操作，调用前必须经过 confirm_gate ——</span>
+    <span class="k">def</span> <span class="n">send_greeting</span>(self, boss_id: <span class="n">str</span>, message: <span class="n">str</span>) -> <span class="n">bool</span>: ...
+    <span class="k">def</span> <span class="n">reply_message</span>(self, thread_id: <span class="n">str</span>, text: <span class="n">str</span>) -> <span class="n">bool</span>: ...
+
+<span class="c"># 输出统一为 envelope：{"ok": true, "data": ..., "risk": "low"}</span></pre>
+    <p class="mini">所有适配器输出结构化 JSON（envelope 格式），供智能层消费。平台差异（选择器、登录方式、字段名）被完全封装在适配器内部。</p>
+    <p style="font-size:13px;color:var(--ink3);margin-top:10px">参考生态：<code>kabi-boss-cli</code>（BOSS直聘 CLI，含 Cookie 提取/搜索/投递/面试查询，内置 1.5s 风控延迟）、<code>OpenCLI</code>（复用 Chrome 登录态的通用 CLI 枢纽，已支持 Boss直聘）。本项目适配器设计与其保持同思路，但把「写操作」默认改为人工确认，进一步降低风险。</p>
+    </section>
+
+    <!-- ===== 06 ENGINE ===== -->
+    <section id="engine">
+      <span class="sec-tag">06 · PM INTELLIGENCE</span>
+      <h3>PM 专属智能引擎</h3>
+      <p class="lead">这是与通用求职工具差异化的核心：让引擎<b>理解产品经理岗位的语义</b>，而不只是做关键词匹配。</p>
+
+      <h4>6.1 五维匹配评分模型</h4>
+      <div class="figure">
+        <svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+          <!-- radar -->
+          <g transform="translate(200,130)">
+            <polygon points="0,-92 87,-28 54,75 -54,75 -87,-28" fill="#eef1fd" stroke="#c9d3ef" stroke-width="1.5"/>
+            <polygon points="0,-74 70,-22 43,60 -43,60 -70,-22" fill="#c7d2f7" stroke="#3b5bdb" stroke-width="1.5"/>
+            <polygon points="0,-55 52,-17 32,45 -32,45 -52,-17" fill="#9fb2ef" stroke="#3b5bdb" stroke-width="1.5"/>
+            <line x1="0" y1="0" x2="0" y2="-92" stroke="#c9d3ef"/><line x1="0" y1="0" x2="87" y2="-28" stroke="#c9d3ef"/><line x1="0" y1="0" x2="54" y2="75" stroke="#c9d3ef"/><line x1="0" y1="0" x2="-54" y2="75" stroke="#c9d3ef"/><line x1="0" y1="0" x2="-87" y2="-28" stroke="#c9d3ef"/>
+            <text x="0" y="-100" text-anchor="middle" style="font-size:11px;fill:#1c2333;font-weight:700">硬技能 30%</text>
+            <text x="100" y="-26" style="font-size:11px;fill:#1c2333;font-weight:700">经验 25%</text>
+            <text x="70" y="92" style="font-size:11px;fill:#1c2333;font-weight:700">行业 15%</text>
+            <text x="-92" y="92" style="font-size:11px;fill:#1c2333;font-weight:700">方向 15%</text>
+            <text x="-108" y="-26" style="font-size:11px;fill:#1c2333;font-weight:700">软性 15%</text>
+            <circle cx="0" cy="-55" r="4" fill="#3b5bdb"/>
+            <circle cx="52" cy="-17" r="4" fill="#3b5bdb"/>
+            <circle cx="32" cy="45" r="4" fill="#3b5bdb"/>
+            <circle cx="-32" cy="45" r="4" fill="#3b5bdb"/>
+            <circle cx="-52" cy="-17" r="4" fill="#3b5bdb"/>
+          </g>
+          <!-- right: detail -->
+          <g transform="translate(430,20)">
+            <rect x="0" y="0" width="440" height="105" rx="10" fill="#fff" stroke="#e4e8f0"/>
+            <text x="16" y="24" style="font-size:12.5px;font-weight:700;fill:#1c2333">五维分解（示例：B端 SaaS 高级产品经理）</text>
+            <text x="16" y="46" style="font-size:11.5px;fill:#5a6478">硬技能：PRD/原型/Axure/Figma/数据分析/需求调研 → 命中 6/7，缺失「SQL」</text>
+            <text x="16" y="66" style="font-size:11.5px;fill:#5a6478">经验：3 年 B 端经验 vs 要求 3-5 年 → 匹配；toB 项目 2 个</text>
+            <text x="16" y="86" style="font-size:11.5px;fill:#5a6478">行业：SaaS/企业服务 同赛道；方向：B 端产品 同方向；软性：JD 强调跨团队协作</text>
+            <rect x="0" y="118" width="440" height="88" rx="10" fill="#fff" stroke="#e4e8f0"/>
+            <text x="16" y="142" style="font-size:12.5px;font-weight:700;fill:#d64545">硬性否决（一票否决）</text>
+            <text x="16" y="164" style="font-size:11.5px;fill:#5a6478">学历红线（如要求统招本科）、年限红线（5 年以上硬性）、</text>
+            <text x="16" y="184" style="font-size:11.5px;fill:#5a6478">关键硬技能缺失（如 AI 产品岗完全无大模型经验）、城市不匹配</text>
+          </g>
+        </svg>
+        <div class="cap">图 3 · 五维评分 + 一票否决项（评分 85+ 进入「推荐投递」，60–85 进入「备选」，&lt;60 或触发否决进入「不投」）</div>
+      </div>
+      <p style="font-size:13px;color:var(--ink2)">评分的同时生成<b>差距分析报告</b>：指出该 JD 的「加分关键词」与「硬伤」，供简历定制与自我提升使用。评分权重可通过 <code>/rank --weights</code> 按用户当前求职阶段调整（如冲刺期加大行业权重）。</p>
+
+      <h4>6.2 产品经理八维技能雷达</h4>
+      <table>
+        <thead><tr><th>维度</th><th>雷达覆盖</th><th>示例证据（简历/作品集抽取）</th></tr></thead>
+        <tbody>
+          <tr><td>需求分析</td><td>用户调研、需求池、优先级</td><td>访谈 20+ 用户产出需求池 V1.3</td></tr>
+          <tr><td>产品设计</td><td>PRD、原型、交互、流程</td><td>Axure/Figma 原型 30+ 页，PRD 模板</td></tr>
+          <tr><td>数据分析</td><td>埋点、A/B、指标体系建设</td><td>转化率提升 23% 的 A/B 复盘</td></tr>
+          <tr><td>项目管理</td><td>排期、跨部门、风险</td><td>主导 5 人跨职能项目按时交付</td></tr>
+          <tr><td>商业/业务</td><td>商业模型、成本收益、市场</td><td>定价改版带来毛利 +2pct</td></tr>
+          <tr><td>AI 能力（2026 新增）</td><td>大模型认知、Prompt、AI 场景</td><td>客服 AI 化项目，准确率提升 28%</td></tr>
+          <tr><td>行业认知</td><td>赛道理解、竞品分析</td><td>竞品拆解报告 5 篇（公开）</td></tr>
+          <tr><td>软技能</td><td>沟通、向上管理、影响力</td><td>评审会组织、OKR 对齐案例</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px;color:var(--ink2)"><code>/radar</code> 将档案证据与目标方向（如「AI 产品经理」）对照，输出差距热力图 + 优先级建议 + 学习资源清单（对标 /upskill）。</p>
+
+      <h4>6.3 简历诊断器（面向国内 ATS）</h4>
+      <ul>
+        <li><b>关键词覆盖率</b>：JD 解析出的硬技能/软技能/行业词，逐一检测简历文本覆盖与自然融入度</li>
+        <li><b>STAR 量化检测</b>：识别「做过」而非「做成过」的条目，自动给出 STAR 改写建议（结果必须可量化）</li>
+        <li><b>ATS 模拟解析</b>：以北森 / Moka / 用友大易 的解析规则模拟提取，检查联系方式是否为字面文本、排版是否错乱（警告：嵌套表格/文本框/矢量文字提取失败率高）</li>
+        <li><b>中文排版规范</b>：一页/两页控制、避免孤立标题、字体嵌入（转 PDF 时必须嵌入中文字体）</li>
+        <li><b>诚实规则</b>：缺失能力如实标为差距，绝不虚构项目（继承原项目原则）</li>
+      </ul>
+
+      <h4>6.4 面试模拟器（中国 PM 题型）</h4>
+      <table>
+        <thead><tr><th>题型</th><th>说明</th><th>产出</th></tr></thead>
+        <tbody>
+          <tr><td>行为面（STAR）</td><td>「讲一个你推动跨部门协作的项目」</td><td>基于档案真实经历映射 3-5 条 STAR 回答骨架</td></tr>
+          <tr><td>产品设计题</td><td>「为 60 岁老人设计一个健康管理 App」</td><td>拆解框架：用户→场景→功能→优先级→MVP</td></tr>
+          <tr><td>估算/费米题</td><td>「北京一年卖出多少杯咖啡」</td><td>拆解链路 + 合理假设 + 验算（附方法论）</td></tr>
+          <tr><td>数据/指标题</td><td>「DAU 下降 10% 如何排查」</td><td>指标体系 + 排查路径 + 归因方法</td></tr>
+          <tr><td>公司/竞品研究</td><td>目标公司产品矩阵与竞对格局</td><td>一页简报（公司信源：官网/公众号/即刻/脉脉/财报）</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px;color:var(--ink2)">支持「模拟面试对话模式」：AI 扮演面试官连续追问，用户口述/打字作答后逐题点评。<b>研究类信息遵循「verify-before-use」</b>，AI 生成的关于公司的事实需附来源并提示人工核实。</p>
+
+      <h4>6.5 作品集管理</h4>
+      <p style="font-size:13.5px;color:var(--ink2)">产品经理求职的差异化筹码。维护 <code>profile/portfolio/</code> 目录：PRD 案例、原型链接、数据复盘、竞品分析；<code>/portfolio</code> 生成一页「作品集索引」附在简历后，或生成可分享的离线 HTML 作品集主页。</p>
+    </section>
+
+    <!-- ===== 07 COMMANDS ===== -->
+    <section id="commands">
+      <span class="sec-tag">07 · MODULES</span>
+      <h3>模块规格（命令一览）</h3>
+      <p class="lead">继承原项目「斜杠命令」风格，共 10 个命令 + 1 个安全命令。每个命令是 Agent 工作流的一次编排入口。</p>
+      <table>
+        <thead><tr><th>命令</th><th>功能</th><th>关键输入 → 输出</th><th>人工介入</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">/setup</td><td>建立 PM 求职档案（3 路径：读取 documents 目录 / 粘贴简历 / 问答式引导）</td><td>材料 → profile.json + 求职意向（方向/城市/薪资/否决项）</td><td>—</td></tr>
+          <tr><td class="mono">/scrape</td><td>跨平台搜岗 + 去重 + 增量入库</td><td>query × 平台 → jobs.jsonl</td><td>—</td></tr>
+          <tr><td class="mono">/rank</td><td>批量五维评分，生成短名单 + 差距报告</td><td>新职位 → 评分表 / rank_report.html</td><td>—</td></tr>
+          <tr><td class="mono">/apply &lt;job&gt;</td><td>定制简历 + 个性化打招呼语；<b>确认后</b>投递</td><td>职位ID → resume_job.pdf + greeting.md</td><td><span class="badge b-red">投递前确认</span></td></tr>
+          <tr><td class="mono">/interview &lt;company&gt;</td><td>面试备战包：公司研究 + 四类题库 + STAR 映射</td><td>公司名 → interview_pack.md</td><td>—</td></tr>
+          <tr><td class="mono">/track</td><td>投递看板 + 沉默(7天)跟进提醒 + 跟进草稿</td><td>— → dashboard.html + followups.md</td><td><span class="badge b-amber">发送跟进需确认</span></td></tr>
+          <tr><td class="mono">/resume-diag</td><td>简历 vs 目标 JD 诊断（覆盖率/STAR/ATS）</td><td>简历 + JD → 诊断报告</td><td>—</td></tr>
+          <tr><td class="mono">/radar</td><td>八维技能雷达 + 差距热力图 + 学习计划</td><td>档案 + 目标方向 → radar.html</td><td>—</td></tr>
+          <tr><td class="mono">/portfolio</td><td>作品集索引页生成</td><td>portfolio/ → index.html</td><td>—</td></tr>
+          <tr><td class="mono">/add-platform</td><td>生成新平台适配器脚手架（含风控模板）</td><td>平台名 → adapters/&lt;name&gt;/</td><td>—</td></tr>
+          <tr><td class="mono">/reset</td><td>清除全部个人数据（输入 RESET 确认）</td><td>— → 数据清空</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h4>/apply 核心流程（起草-评审双 Agent + 人工闸门）</h4>
+      <div class="card">
+        <ol>
+          <li><b>解析</b>：从职位详情提取结构化 JD（行业/方向/级别/薪资/硬技能/软技能/红线）</li>
+          <li><b>评估</b>：五维评分 + 否决检查，输出匹配度与差距</li>
+          <li><b>起草</b>：Agent A 依据档案与差距报告生成定制简历（调序/换词/补量化，不虚构）与个性化打招呼语（依据 JD 亮点 + 用户项目，拒绝模板话术）</li>
+          <li><b>评审</b>：Agent B 独立研究该公司（官网/新闻/产品），批判草稿的匹配度与真实性，产出修订意见</li>
+          <li><b>修订 + 校验</b>：生成 PDF（HTML→Chromium 打印，嵌入中文字体），ATS 模拟解析校验，视觉检查一页/两页与版式</li>
+          <li><b>呈现 + 人工确认</b>：输出简历 PDF + 打招呼语 + 校验清单，等待用户确认后才调用适配器写操作</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== 08 DATA ===== -->
+    <section id="data">
+      <span class="sec-tag">08 · DATA MODEL</span>
+      <h3>数据模型</h3>
+      <p class="lead">全部本地存储。核心实体：Profile（档案）、Job（职位）、Application（投递）、Company（公司）、Message（沟通）、MatchScore（评分）。</p>
+
+      <h4>投递状态机</h4>
+      <div class="figure">
+        <svg viewBox="0 0 900 150" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#9aa8cf"/>
+            </marker>
+          </defs>
+          <g font-family="inherit">
+            <rect x="30" y="40" width="120" height="46" rx="10" fill="#fff" stroke="#c9d3ef"/><text x="90" y="61" text-anchor="middle" style="font-size:12px;font-weight:700">已投递</text><text x="90" y="77" text-anchor="middle" style="font-size:10px;fill:#8a93a6">打招呼已发送</text>
+            <rect x="210" y="40" width="120" height="46" rx="10" fill="#fff" stroke="#c9d3ef"/><text x="270" y="61" text-anchor="middle" style="font-size:12px;font-weight:700">沟通中</text><text x="270" y="77" text-anchor="middle" style="font-size:10px;fill:#8a93a6">BOSS 回复</text>
+            <rect x="390" y="40" width="120" height="46" rx="10" fill="#e6f7f0" stroke="#0e9f6e"/><text x="450" y="61" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#0e9f6e">面试</text><text x="450" y="77" text-anchor="middle" style="font-size:10px;fill:#5a6478">1/2/3 轮</text>
+            <rect x="570" y="40" width="120" height="46" rx="10" fill="#e6f7f0" stroke="#0e9f6e"/><text x="630" y="61" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#0e9f6e">Offer</text><text x="630" y="77" text-anchor="middle" style="font-size:10px;fill:#5a6478">薪资谈判</text>
+            <rect x="750" y="40" width="120" height="46" rx="10" fill="#fdeaea" stroke="#d64545"/><text x="810" y="61" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#d64545">拒绝/终止</text><text x="810" y="77" text-anchor="middle" style="font-size:10px;fill:#8c2f2f">记录原因</text>
+            <path d="M150,63 H210" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+            <path d="M330,63 H390" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+            <path d="M510,63 H570" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+            <path d="M690,63 H750" stroke="#9aa8cf" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+            <path d="M390,86 L390,120 L150,120 L150,88" stroke="#d64545" stroke-width="1.3" stroke-dasharray="5 4" fill="none" marker-end="url(#arr2)"/>
+            <text x="270" y="114" text-anchor="middle" style="font-size:10.5px;fill:#8c2f2f">未通过 / 面试失败</text>
+            <rect x="30" y="120" width="120" height="24" rx="12" fill="#fdf3e3" stroke="#f0ddb0"/>
+            <text x="90" y="136" text-anchor="middle" style="font-size:10px;fill:#8a5a12">⚠ 沉默 &gt; 7 天 → 跟进提醒</text>
+          </g>
+        </svg>
+        <div class="cap">图 4 · 投递状态机（跟踪窗口 7 天，拒绝原因入库用于复盘）</div>
+      </div>
+
+      <h4>核心 Schema 示例</h4>
+      <pre><span class="c"># profile.json（档案节选）</span>
+{
+  <span class="s">"basic"</span>: {<span class="s">"name"</span>: <span class="s">"…"</span>, <span class="s">"city"</span>: <span class="s">"上海"</span>, <span class="s">"years"</span>: 4},
+  <span class="s">"intent"</span>: {                          <span class="c">// 求职意向</span>
+    <span class="s">"direction"</span>: [<span class="s">"B端"</span>, <span class="s">"AI产品"</span>],
+    <span class="s">"industries"</span>: [<span class="s">"SaaS"</span>, <span class="s">"企业服务"</span>],
+    <span class="s">"salary_min"</span>: 35, <span class="s">"k*12</span>…<span class="s">"</span>,
+    <span class="s">"veto"</span>: {<span class="s">"degree"</span>: <span class="s">"本科"</span>, <span class="s">"remote_only"</span>: <span class="k">false</span>}
+  },
+  <span class="s">"skills"</span>: {<span class="s">"hard"</span>: {<span class="s">"PRD"</span>: <span class="n">5</span>, <span class="s">"Axure"</span>: <span class="n">4</span>, <span class="s">"SQL"</span>: <span class="n">2</span>, <span class="s">"数据分析"</span>: <span class="n">4</span>}},
+  <span class="s">"portfolio"</span>: [<span class="s">"PRD案例.pdf"</span>, <span class="s">"https://…figma…"</span>]
+}
+
+<span class="c"># match_score（评分节选，随投递一起入库）</span>
+{
+  <span class="s">"job_id"</span>: <span class="s">"boss:6f8a…"</span>, <span class="s">"score"</span>: <span class="n">87</span>,
+  <span class="s">"breakdown"</span>: {<span class="s">"hard_skills"</span>: {<span class="s">"weight"</span>: .30, <span class="s">"hits"</span>: [<span class="s">"PRD"</span>, <span class="s">"数据分析"</span>], <span class="s">"misses"</span>: [<span class="s">"SQL"</span>]}},
+  <span class="s">"veto"</span>: {<span class="s">"passed"</span>: <span class="k">true</span>},
+  <span class="s">"gaps"</span>: [<span class="s">"熟悉 SQL 取数"</span>, <span class="s">"AI 大模型场景落地案例"</span>],
+  <span class="s">"tier"</span>: <span class="s">"recommend"</span>   <span class="c">// recommend | watch | skip</span>
+}</pre>
+    </section>
+
+    <!-- ===== 09 STACK ===== -->
+    <section id="stack">
+      <span class="sec-tag">09 · TECH STACK</span>
+      <h3>技术选型</h3>
+      <table>
+        <thead><tr><th>层</th><th>选型</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>语言/运行时</td><td>Python 3.11+（uv 管理）</td><td>Playwright、boss-cli 生态同源，便于直接复用开源适配器逻辑；uv 保证隔离安装</td></tr>
+          <tr><td>LLM 接入</td><td>DeepSeek / 通义千问 / GLM（OpenAI 兼容），可选 Claude</td><td>国内可用、成本低；通过统一 LLM 适配层切换，prompt 与流程无关</td></tr>
+          <tr><td>浏览器自动化</td><td>Playwright（持久化 user-data-dir 上下文）</td><td>扫码登录一次、会话复用；可控频率与验证码感知；跨平台</td></tr>
+          <tr><td>简历生成</td><td>HTML → PDF（Chromium print）+ 中文字体嵌入；xelatex 备选</td><td>中文排版可控（原项目 LaTeX 对中文字体配置较重），ATS 文本层天然友好</td></tr>
+          <tr><td>存储</td><td>SQLite + JSONL 快照</td><td>单文件、零运维、隐私本地化</td></tr>
+          <tr><td>看板/报告</td><td>自包含 HTML（内联 SVG/JS，无外部依赖）</td><td>继承原项目 /html-report 理念，离线可查可打印</td></tr>
+          <tr><td>调度</td><td>cron / 系统计划任务触发 /scrape + /track</td><td>每日晨间巡检自动化</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info"><b>关于简历工具链的选择：</b>原项目使用 LaTeX（xelatex），其对中文需要 fontspec + 中文字体配置，跨平台折腾成本高。本设计默认「HTML → Chromium 打印 PDF」，既保证中文排版质量，又让 ATS 文本层可控；同时保留 <code>/add-template</code> 式的模板注册机制（支持任意可编译为 PDF 的工具链）。</div>
+    </section>
+
+    <!-- ===== 10 COMPLIANCE ===== -->
+    <section id="compliance">
+      <span class="sec-tag">10 · COMPLIANCE &amp; RISK</span>
+      <h3>合规与风控设计</h3>
+      <div class="grid2">
+        <div class="card">
+          <b>合规定位</b>
+          <ul class="mini" style="margin-top:6px">
+            <li>个人效率工具，非商业爬虫/数据转售</li>
+            <li>仅使用<b>本人账号</b>登录态；凭证永不离开浏览器（CDP 方案下连本地文件都不落盘）</li>
+            <li>遵守《个人信息保护法》：简历、沟通等个人信息<b>仅本地存储</b>，不上传任何第三方服务（LLM 调用前可配置脱敏）</li>
+            <li>不绕过验证码、不批量注册、不刷量</li>
+          </ul>
+        </div>
+        <div class="card">
+          <b>平台风控（Boss直聘）</b>
+          <ul class="mini" style="margin-top:6px">
+            <li>读操作限频：搜索 3–8s 随机间隔，单任务 ≤ 20 页</li>
+            <li>写操作闸门：打招呼/投递/回复一律人工确认；单日 ≤ 50 次</li>
+            <li>验证码 / 异常提示 → 立即停机并通知，绝不硬闯</li>
+            <li>配置「保守时段」（9:00–11:00 高峰降频）与全局熔断开关</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout danger"><b>风险声明：</b>① 平台规则可能随时变更，自动化能力可能失效，本项目<b>不承诺绕过任何风控</b>；② 过度使用自动化（尤其写操作）存在账号被限流/封禁风险，用户需自行承担；③ 所有 AI 生成的关于公司的事实信息需人工核实（verify-before-use）。</div>
+    </section>
+
+    <!-- ===== 11 ROADMAP ===== -->
+    <section id="roadmap">
+      <span class="sec-tag">11 · ROADMAP</span>
+      <h3>路线图</h3>
+      <table>
+        <thead><tr><th>阶段</th><th>周期</th><th>里程碑</th><th>验收标准</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge b-brand">MVP</span></td><td>第 1–2 周</td>
+            <td>/setup 建档 · /scrape（Boss直聘）· /rank 评分 · /track 看板</td>
+            <td>能对 50 个真实 Boss直聘职位完成抓取与评分，看板正确统计</td>
+          </tr>
+          <tr>
+            <td><span class="badge b-purple">V1</span></td><td>第 3–6 周</td>
+            <td>/apply 简历生成 · 打招呼起草+人工闸门 · 投递追踪 · 消息提醒</td>
+            <td>完成 1 次真实投递闭环（人工确认后），简历 ATS 校验通过</td>
+          </tr>
+          <tr>
+            <td><span class="badge b-amber">V2</span></td><td>第 7–10 周</td>
+            <td>/interview 面试模拟 · /radar 技能雷达 · 拉勾/猎聘适配器 · 报告导出</td>
+            <td>覆盖 ≥3 平台；面试题库覆盖 4 类题型；支持离线报告分享</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="mini" style="margin-top:8px">里程碑设计遵循「先读后写、先单平台后多平台」：MVP 阶段只做读操作（搜索/评分），确认风控稳定后，V1 才引入带人工闸门的写操作。</p>
+    </section>
+
+    <!-- ===== 12 STRUCTURE ===== -->
+    <section id="structure">
+      <span class="sec-tag">12 · REPO LAYOUT</span>
+      <h3>项目目录结构</h3>
+      <pre>pm-scout/
+├── cli.py                          <span class="c"># 命令入口（typer/argparse）</span>
+├── profile/                        <span class="c"># 个人资料区（.gitignore，绝不入库）</span>
+│   ├── profile.json                <span class="c"># 求职档案 + 求职意向</span>
+│   ├── resume_base/                <span class="c"># 简历母版（各方向 2-3 份）</span>
+│   └── portfolio/                  <span class="c"># 作品集（PRD/原型/复盘）</span>
+├── adapters/                       <span class="c"># 平台适配器（统一 JobAdapter 协议）</span>
+│   ├── base.py
+│   ├── risk.py                     <span class="c"># 频率/限额/熔断</span>
+│   ├── boss/                       <span class="c"># Boss直聘 · P0（Playwright）</span>
+│   ├── lagou/  liepin/  zhaopin/   <span class="c"># P1/P2（脚手架生成）</span>
+│   └── template/                   <span class="c"># /add-platform 脚手架模板</span>
+├── engine/                         <span class="c"># PM 智能引擎</span>
+│   ├── jd_parser.py                <span class="c"># JD → 结构化（行业/方向/级别/技能/红线）</span>
+│   ├── matcher.py                  <span class="c"># 五维评分 + 否决 + 差距</span>
+│   ├── resume_gen.py               <span class="c"># HTML→PDF 简历生成（双 Agent）</span>
+│   ├── resume_diag.py              <span class="c"># 覆盖率 / STAR / ATS 模拟</span>
+│   ├── skill_radar.py              <span class="c"># 八维能力模型</span>
+│   ├── interview_gen.py            <span class="c"># 面试包生成</span>
+│   └── llm.py                      <span class="c"># LLM 适配层（DeepSeek/通义/GLM/Claude）</span>
+├── commands/                       <span class="c"># 命令编排（每个命令一个模块）</span>
+├── storage/                        <span class="c"># SQLite + JSONL 快照</span>
+├── reports/                        <span class="c"># 自包含 HTML 看板/报告产物</span>
+├── salary_lookup.py                <span class="c"># 本地薪资对标（借鉴原项目）</span>
+├── templates/                      <span class="c"># 简历/打招呼语/跟进模板</span>
+└── SETUP.md</pre>
+      <p style="font-size:13px;color:var(--ink2)">「双配置根」原则继承自原项目：<code>adapters/</code>（可移植的平台技能）与 <code>commands/ + engine/</code>（编排与智能）分离，新增平台只改 <code>adapters/</code>，新增智能不碰平台。</p>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+      <p><b>灵感来源：</b><a href="https://github.com/MadsLorentzen/ai-job-search">github.com/MadsLorentzen/ai-job-search</a>（MIT License）—— Claude Code 驱动的求职智能体框架，本设计在其「命令式工作流 / 门户适配器解耦 / 起草-评审双 Agent / PDF 验证循环」基础上，针对中国大陆市场与产品经理岗位语义完成本土化再设计。</p>
+      <p style="margin-top:6px"><b>免责声明：</b>本设计文档为产品与技术方案，不构成对任何平台条款的突破建议。实际使用请遵守各平台用户协议与相关法律法规，自动化操作风险由使用者自行承担。</p>
+      <p style="margin-top:10px">PM 智投 · Design Doc v1.0 · 2026-08-15</p>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

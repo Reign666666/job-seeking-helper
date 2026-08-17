@@ -1,0 +1,9 @@
+# 构建镜像时排除的目录/文件
+.git
+data/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
+docs/

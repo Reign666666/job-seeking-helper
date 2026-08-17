@@ -1,0 +1,14 @@
+# Render.com 部署配置（Blueprints 一键部署）
+# 部署后请在 Render 控制台为该服务配置环境变量：
+#   PM_SCOUT_API_KEY  = 你的大模型 API Key（必填）
+#   PM_SCOUT_BASE_URL = 可选，默认 DeepSeek https://api.deepseek.com/v1
+#   PM_SCOUT_MODEL    = 可选，默认 deepseek-v4-flash
+services:
+  - type: web
+    name: pm-scout
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: PM_SCOUT_HOST
+        value: 0.0.0.0
