@@ -46,19 +46,17 @@ def _write_json(path: Path, data) -> None:
 # ---------------- 配置 ----------------
 
 def load_config() -> LLMConfig:
-    # 云端部署优先读环境变量（Key 注入服务器环境，不进代码仓库）
-    env_key = os.environ.get("PM_SCOUT_API_KEY", "")
-    if env_key:
-        return LLMConfig(
-            base_url=os.environ.get("PM_SCOUT_BASE_URL", "https://api.deepseek.com/v1"),
-            api_key=env_key,
-            model=os.environ.get("PM_SCOUT_MODEL", "deepseek-v4-flash"),
-        )
+    """配置优先级：UI 保存的 config.json ＞ 环境变量 ＞ 默认值。
+
+    UI（模型设置弹窗）是 Base URL / 模型名 / API Key 的唯一入口；
+    环境变量仅在 config.json 缺失或对应字段为空时兜底（如云端部署时
+    API Key 由 PM_SCOUT_API_KEY 提供，避免进入代码仓库）。
+    """
     cfg = _read_json(CONFIG_PATH, {})
     return LLMConfig(
-        base_url=cfg.get("base_url", "https://api.deepseek.com/v1"),
-        api_key=cfg.get("api_key", ""),
-        model=cfg.get("model", "deepseek-chat"),
+        base_url=cfg.get("base_url") or os.environ.get("PM_SCOUT_BASE_URL") or "https://api.deepseek.com/v1",
+        api_key=cfg.get("api_key") or os.environ.get("PM_SCOUT_API_KEY") or "",
+        model=cfg.get("model") or os.environ.get("PM_SCOUT_MODEL") or "deepseek-chat",
     )
 
 

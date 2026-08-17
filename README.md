@@ -55,17 +55,17 @@ python -m venv .venv
 | 智谱 GLM | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash` |
 | 其他 | 任意 OpenAI 兼容地址 | — |
 
-> 云端部署时不使用页面配置：改为读环境变量 `PM_SCOUT_API_KEY`（必填）、`PM_SCOUT_BASE_URL`、`PM_SCOUT_MODEL`，Key 注入服务器环境，不进代码仓库。
+> 配置优先级：**UI（模型设置弹窗）＞ 环境变量 ＞ 默认值**。Base URL 与模型名在页面下拉选择后自动填充，无需配置环境变量；环境变量仅作为兜底（云端部署时可用 `PM_SCOUT_API_KEY` 提供 API Key，避免进入代码仓库）。
 
 ## 云端部署
 
-仓库内置 Dockerfile 与 `render.yaml`（Render Blueprints）。部署后请在平台控制台为该服务配置环境变量：
+仓库内置 Dockerfile 与 `render.yaml`（Render Blueprints）。部署后**直接在页面的「模型设置」里选择模型并填写 API Key 即可**（UI 配置优先）。可选环境变量：
 
 | 环境变量 | 说明 |
 |---|---|
-| `PM_SCOUT_API_KEY` | 必填，大模型 API Key |
+| `PM_SCOUT_API_KEY` | 可选，API Key 兜底（便于跨重新部署持久化） |
 | `PM_SCOUT_BASE_URL` | 可选，默认 `https://api.deepseek.com/v1` |
-| `PM_SCOUT_MODEL` | 可选，默认 `deepseek-v4-flash` |
+| `PM_SCOUT_MODEL` | 可选，默认 `deepseek-chat` |
 
 服务端口由平台注入（Render 的 `$PORT`），健康检查路径 `/api/health`。注意：云端实例的分析历史存于临时磁盘，重启会清空（隐私更友好，如需持久化请自备存储）。
 
