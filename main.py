@@ -74,19 +74,35 @@ def set_config(body: ConfigIn):
         model=(body.model or "deepseek-chat").strip(),
     )
     if not cfg.api_key:
-        raise HTTPException(400, "API Key 不能为空")
+        # 弹窗中 Key 留空：保留已保存的 Key，不覆盖
+        existing = storage.load_config()
+        cfg.api_key = existing.api_key
+    if not cfg.api_key:
+        raise HTTPException(400, "API Key 为空且未保存过 Key，请填写 API Key")
     storage.save_config(cfg)
     return {"ok": True, **storage.config_public()}
 
 
+class TestLLMIn(BaseModel):
+    base_url: str = Field(default="", max_length=300)
+    api_key: str = Field(default="", max_length=200)
+    model: str = Field(default="", max_length=100)
+
+
 @app.post("/api/test_llm")
-def test_llm():
-    cfg = storage.load_config()
+def test_llm(body: TestLLMIn):
+    """用弹窗当前参数测试；空字段回退到已保存配置；都没有 Key 则报参数错误。"""
+    saved = storage.load_config()
+    cfg = LLMConfig(
+        base_url=(body.base_url.strip() or saved.base_url),
+        api_key=(body.api_key.strip() or saved.api_key),
+        model=(body.model.strip() or saved.model),
+    )
     if not cfg.is_ready():
-        raise HTTPException(400, "尚未配置 API Key")
+        raise HTTPException(400, "API Key 未填写且未保存过，请先在弹窗中填写 API Key")
     try:
         msg = llm_mod.ping(cfg)
-        return {"ok": True, "message": msg}
+        return {"ok": True, "message": msg, "used": {"base_url": cfg.base_url, "model": cfg.model}}
     except llm_mod.LLMError as e:
         raise HTTPException(502, str(e))
 

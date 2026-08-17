@@ -264,7 +264,7 @@
       <button class="btn-ok" id="btnSave">保存</button>
     </div>
     <div class="mtest" id="testResult"></div>
-    <div class="tips">💡 选择后会自动填充 Base URL 与模型名；「自定义」可填任意 OpenAI 兼容接口。Key 留空则保留已保存的 Key。</div>
+    <div class="tips">💡 下拉选择后自动填充 Base URL 与模型名；「自定义」可填任意 OpenAI 兼容接口。API Key 留空 = 保留已保存的 Key；保存后不会自动关闭，点击弹窗外区域即可关闭。</div>
   </div>
 </div>
 
@@ -616,22 +616,27 @@ $('configMask').addEventListener('click', e => { if (e.target === $('configMask'
 $('btnSave').onclick = async () => {
   const body = { base_url: $('cfgBase').value.trim(), model: $('cfgModel').value.trim() };
   const key = $('cfgKey').value.trim();
-  if (!key) {
-    const cfg = await api('/api/config').catch(() => null);
-    if (!cfg || !cfg.ready) { $('testResult').textContent = '⚠ 请输入 API Key'; return; }
-  } else { body.api_key = key; }
+  if (key) body.api_key = key;   // Key 留空 = 保留已保存的 Key（后端处理），不报错
   try {
     const r = await api('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    $('testResult').textContent = '✅ 已保存';
+    $('testResult').textContent = `✅ 已保存 · 模型 ${r.model} · Key ${r.api_key_masked}`;
     $('modelChip').textContent = `模型：${r.model} · Key ${r.api_key_masked}`;
-    setTimeout(() => $('configMask').classList.remove('show'), 700);
+    $('cfgKey').value = '';      // 清空输入框，避免明文滞留
+    $('cfgKey').placeholder = `已保存（${r.api_key_masked}），留空则不修改`;
+    // 不自动关闭弹窗，用户确认后自行关闭
   } catch (e) { $('testResult').textContent = '⚠ ' + e.message; }
 };
 $('btnTest').onclick = async () => {
+  // 优先使用弹窗当前填写的参数测试；空字段由后端回退到已保存配置
+  const body = {
+    base_url: $('cfgBase').value.trim(),
+    model: $('cfgModel').value.trim(),
+    api_key: $('cfgKey').value.trim(),
+  };
   $('testResult').textContent = '测试中…';
   try {
-    const r = await api('/api/test_llm', { method: 'POST' });
-    $('testResult').textContent = '✅ ' + r.message;
+    const r = await api('/api/test_llm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    $('testResult').textContent = `✅ ${r.message}（${r.used.model} @ ${r.used.base_url}）`;
   } catch (e) { $('testResult').textContent = '❌ ' + e.message; }
 };
 
