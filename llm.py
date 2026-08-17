@@ -73,8 +73,8 @@ def _extract_json(text: str) -> dict:
         raise LLMError(f"模型输出 JSON 解析失败：{e}")
 
 
-def chat(config: LLMConfig, system: str, user: str, timeout: float = 240.0) -> dict:
-    """调用对话接口并返回解析后的 JSON 对象。"""
+def _post(config: LLMConfig, system: str, user: str, timeout: float, json_mode: bool) -> str:
+    """发起 chat/completions 请求，返回模型输出的原始文本。"""
     if not config.is_ready():
         raise LLMError("尚未配置大模型 API Key，请先点击右上角「模型设置」完成配置。")
 
@@ -95,14 +95,17 @@ def chat(config: LLMConfig, system: str, user: str, timeout: float = 240.0) -> d
 
     try:
         with httpx.Client(timeout=timeout) as client:
-            # 优先尝试 json_object 模式；部分服务商不支持会 400，降级重试
-            payload["response_format"] = {"type": "json_object"}
-            resp = client.post(url, json=payload, headers=headers)
-            if resp.status_code == 400 and "response_format" in payload:
-                payload.pop("response_format")
+            if json_mode:
+                # 优先尝试 json_object 模式；部分服务商不支持会 400，降级重试
+                payload["response_format"] = {"type": "json_object"}
+                resp = client.post(url, json=payload, headers=headers)
+                if resp.status_code == 400 and "response_format" in payload:
+                    payload.pop("response_format")
+                    resp = client.post(url, json=payload, headers=headers)
+            else:
                 resp = client.post(url, json=payload, headers=headers)
             resp.raise_for_status()
-            content = resp.json()["choices"][0]["message"]["content"]
+            return resp.json()["choices"][0]["message"]["content"]
     except httpx.HTTPStatusError as e:
         body = e.response.text[:300]
         status = e.response.status_code
@@ -125,12 +128,21 @@ def chat(config: LLMConfig, system: str, user: str, timeout: float = 240.0) -> d
     except (KeyError, IndexError, json.JSONDecodeError) as e:
         raise LLMError(f"模型返回格式异常：{e}")
 
+
+def chat(config: LLMConfig, system: str, user: str, timeout: float = 240.0) -> dict:
+    """调用对话接口并返回解析后的 JSON 对象（用于分析等结构化场景）。"""
+    content = _post(config, system, user, timeout, json_mode=True)
     return _extract_json(content)
 
 
+def chat_raw(config: LLMConfig, system: str, user: str, timeout: float = 240.0) -> str:
+    """调用对话接口，返回模型原始文本（不要求 JSON）。"""
+    return _post(config, system, user, timeout, json_mode=False)
+
+
 def ping(config: LLMConfig, timeout: float = 60.0) -> str:
-    """连通性测试：让模型回一个词。"""
-    data = chat(config, "你是一个连通性测试助手。", "请只回复两个字：正常", timeout=timeout)
-    if isinstance(data, dict):
+    """连通性测试：让模型回一个词，走纯文本通道，不要求 JSON。"""
+    content = chat_raw(config, "你是一个连通性测试助手。", "请只回复两个字：正常", timeout=timeout)
+    if content and content.strip():
         return "模型连通正常"
-    return str(data)
+    raise LLMError("模型返回内容为空，请检查 Base URL 与模型名。")
