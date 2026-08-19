@@ -7,6 +7,7 @@
 [![Frontend](https://img.shields.io/badge/Frontend-Vanilla%20JS-3b5bdb)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript)
 [![Privacy](https://img.shields.io/badge/Privacy-Local%20First-important)](https://github.com/Reign666666/job-seeking-helper)
 [![Deploy](https://img.shields.io/badge/Deploy-Docker%20%2F%20Render-blueviolet)](https://render.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-brightgreen)](https://job-seeking-helper.onrender.com/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
@@ -18,6 +19,8 @@
 - **四维输出**：匹配度评分（五维模型 + 硬性否决项）、简历优化建议（关键词覆盖率 / STAR 量化改写）、打招呼话术（简洁 / 专业 / 热情 三版）、面试准备建议（预测题型 / 深挖点 / 素材清单）
 - **隐私优先**：简历解析、脱敏、分析全部在本机完成；发送给大模型的仅为脱敏后的文本
 - **模型无关**：兼容任意 OpenAI 标准接口（DeepSeek / 通义千问 / 智谱 GLM 等），页面内一键配置
+
+🔗 **在线体验**：[job-seeking-helper.onrender.com](https://job-seeking-helper.onrender.com/) —— 云端演示实例，可在页面右上角「模型设置」中配置自己的 API Key 后直接使用（免费实例闲置后需等待约 1 分钟冷启动）。
 
 项目理念受开源项目 [ai-job-search](https://github.com/MadsLorentzen/ai-job-search) 启发，针对中国大陆招聘市场与产品经理岗位语义进行了重新设计。
 
@@ -109,7 +112,7 @@ docker run -p 8765:8765 -e PM_SCOUT_HOST=0.0.0.0 pm-scout
 
 ## 云端部署
 
-仓库内置 `Dockerfile` 与 `render.yaml`（Render Blueprints），支持一键部署：
+仓库内置 `Dockerfile` 与 `render.yaml`（Render Blueprints），支持一键部署。当前线上实例：[job-seeking-helper.onrender.com](https://job-seeking-helper.onrender.com/)（免费套餐，闲置自动休眠，首次访问需等待冷启动）：
 
 1. Fork 本仓库并推送至自己的 GitHub
 2. 在 [Render](https://render.com) 创建 Blueprint，关联仓库
